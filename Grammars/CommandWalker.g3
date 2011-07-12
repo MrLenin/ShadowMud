@@ -1,0 +1,69 @@
+﻿tree grammar CommandWalker;
+
+options {
+	language=CSharp3;
+	output=AST;
+	tokenVocab=MudInput;
+	ASTLabelType=CommonTree;
+}
+
+@header {
+	using System;
+	}
+
+@namespace{ShadowMUD.Grammars}
+
+/*
+ * Tree Interpreter Rules
+ */
+
+public
+commandUnit
+	:	'move'^ dir=direction? stringInput? { Move($dir.text); }
+	|	'look'^ dir=direction? stringInput?	{ Look($dir.text); }
+	|	(setObject | setRoom | setExit)
+	|	'set'^ stringInput? { SetUnknown(); }
+	|	saveRoom
+	|	'save'^ stringInput?
+	|	'load'^ ('object' | 'npc')? INTEGER?
+	|	'say'^ stringInput?
+	;
+
+private
+setRoom
+	:	^(SETROOM ^(attr=roomAttribute s=stringInput?)) { SetRoom($attr.text, $s.TreeText); }
+	|	'room'^ s=stringInput?  { SetRoom("badattribute", $s.TreeText); }
+	;
+
+private
+setExit
+	:	^(SETEXIT ^(d=direction ^(strattr=exitStrAttribute s=stringInput?))) { SetExit($d.text, $strattr.text, $s.TreeText); }
+	|	^(SETEXIT ^(d=direction ^(intattr=exitIntAttribute i=INTEGER?))) { SetExit($d.text, $intattr.text, $i.text); }
+	|	^(SETEXIT ^(d=direction s=stringInput?)) { SetExit($d.text, "badattribute", $s.TreeText); }
+	|	'exit'^ s=stringInput? { SetExit("baddir", string.Empty, $s.TreeText); }
+	;
+
+private
+setObject
+	:	^(SETOBJECT ^(attr=objectAttribute s=stringInput?))
+	|	'object'^ s=stringInput?
+	;
+
+private saveRoom : ^(SAVEROOM stringInput?);
+
+/*
+ * Helper Rules
+ */
+
+private roomAttribute : 'name' | 'description';
+
+private exitStrAttribute : 'description' | 'keywords';
+
+private exitIntAttribute : 'flags' | 'keyid' | 'target';
+
+private objectAttribute : 'name' | 'description' | 'keywords';
+
+private direction : 'north' | 'east' | 'west' | 'south' | 'up' | 'down';
+
+private stringInput returns [ string TreeText ]
+	:	s=(TEXT | INTEGER)+ { $TreeText = $s.tree!=null ? $s.tree.ToStringTree() : string.Empty; };

@@ -1,0 +1,118 @@
+﻿grammar MudInput;
+
+options {
+    language=CSharp3;
+    TokenLabelType=CommonToken;
+    output=AST;
+    ASTLabelType=CommonTree;
+}
+
+tokens {
+	SETOBJECT;
+	SETROOM;
+	SAVEROOM;
+	SETEXIT;
+}
+
+@lexer::namespace{ShadowMUD.Grammars}
+@parser::namespace{ShadowMUD.Grammars}
+
+/*
+ * Parser Rules
+ */
+
+public
+commandUnit
+	:	'move'^ direction? stringInput?
+	|	'look'^ direction? stringInput?
+	|	'set'! (setExit | setObject | setRoom)
+	|	'set'^ stringInput?
+	|	'save'! saveRoom
+	|	'save'^ stringInput?
+	|	'load'^ ('object' | 'npc')? INTEGER?
+	|	'say'^ stringInput?
+	|	'create'! (createExit | createObject | createRoom)
+	|	'create'^ stringInput?
+	;
+
+/*
+ * Tree Construction Rules
+ */
+
+private
+createRoom
+	:	'room' direction?
+	;
+	
+private
+createObject
+	:	'object'
+	;
+
+private
+createExit
+	:	'exit'
+	;
+
+private
+setRoom
+	:	'room' roomAttribute stringInput?
+	->	^(SETROOM ^(roomAttribute stringInput?))
+	|	'room'^ stringInput?
+	;
+
+private
+setExit
+	:	'exit' direction exitStrAttribute? stringInput?
+	->	^(SETEXIT ^(direction ^(exitStrAttribute stringInput?)?))
+	|	'exit' direction exitIntAttribute INTEGER?
+	->	^(SETEXIT ^(direction ^(exitIntAttribute INTEGER?)))
+	|	'exit'^ stringInput?
+	;
+
+private
+setObject
+	:	'object' objectAttribute stringInput?
+	->	^(SETOBJECT ^(objectAttribute stringInput?))
+	|	'object'^ stringInput?
+	;
+
+private
+saveRoom
+	:	'room' stringInput?
+	->	^(SAVEROOM stringInput?)
+	;
+
+/*
+ * Helper Rules
+ */
+
+private createAttribute : ;
+
+private roomAttribute : 'name' | 'description';
+
+private exitStrAttribute : 'description' | 'keywords';
+
+private exitIntAttribute : 'flags' | 'keyid' | 'target';
+
+private objectAttribute : 'name' | 'description' | 'keywords';
+
+private direction : 'north' | 'east' | 'west' | 'south' | 'up' | 'down';
+
+private stringInput : (TEXT | INTEGER)+;
+
+/*
+ * Lexer Rules
+ */
+
+WS :	(' ' | '\t' | '\f' | '\a') { $channel=Hidden; };
+
+SYMBOL:	('\u0021' .. '\u002F' | '\u003A' .. '\u0040' | '\u005B' .. '\u0060' | '\u007B' .. '\u007E');
+
+CHAR :	('a'..'z' | 'A'..'Z');
+
+INTEGER	:	('0'..'9')+;
+
+TEXT :	(CHAR | SYMBOL) (CHAR | '0'..'9' | SYMBOL)*
+	 |	INTEGER (CHAR | SYMBOL) (CHAR | '0'..'9' | SYMBOL)*
+	 ;
