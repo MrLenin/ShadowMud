@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="90682a25aded4e2a9506de403f4fe45b" Name="Character Diagram" ZoomLevel="82" >
+        <EntityTypeShape EntityType="Model.Attribute" Width="1.5" PointX="5.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.Character" Width="1.5" PointX="7.625" PointY="0.875" />
+        <EntityTypeShape EntityType="Model.Finance" Width="1.5" PointX="7.625" PointY="5.125" />
+        <AssociationConnector Association="Model.FK_Attribute_Character" />
+        <AssociationConnector Association="Model.FK_Finances_Character" />
+        <EntityTypeShape EntityType="Model.State" Width="1.5" PointX="10.125" PointY="1.625" />
+        <AssociationConnector Association="Model.FK_State_Character" />
+      </Diagram>
+      <Diagram DiagramId="c99f90f675ff4a4992febfa58e24fa84" Name="Room Diagram" ZoomLevel="102" >
+        <EntityTypeShape EntityType="Model.Exit" Width="1.875" PointX="5.125" PointY="1.75" />
+        <EntityTypeShape EntityType="Model.ExitKeyword" Width="1.5" PointX="7.75" PointY="2.25" />
+        <AssociationConnector Association="Model.FK_ExitKeyword_Exit" />
+        <EntityTypeShape EntityType="Model.Zone" Width="1.5" PointX="0.5" PointY="2.5" />
+        <EntityTypeShape EntityType="Model.Room" Width="1.5" PointX="2.75" PointY="2" />
+        <AssociationConnector Association="Model.FK_Exit_Room_Destination" />
+        <AssociationConnector Association="Model.FK_Exit_Room_Source" />
+        <AssociationConnector Association="Model.FK_Room_Zone" />
+      </Diagram>
+      <Diagram DiagramId="3745d9e342724c9cac8d5f32c7b7ce84" Name="Item Diagram" ZoomLevel="106" >
+        <EntityTypeShape EntityType="Model.Item" Width="1.75" PointX="2.875" PointY="1.875" />
+        <EntityTypeShape EntityType="Model.ItemKeyword" Width="1.75" PointX="2.875" PointY="5.5" />
+        <EntityTypeShape EntityType="Model.ItemWearLocation" Width="1.625" PointX="5.5" PointY="2.25" />
+        <AssociationConnector Association="Model.FK_ItemKeyword_Item" />
+        <AssociationConnector Association="Model.FK_ItemWearLocation_Item" />
+      </Diagram>
+      <Diagram DiagramId="cd5449a267784705b91197076518f980" Name="Misc Diagram" ZoomLevel="81" >
+        <EntityTypeShape EntityType="Model.Text" Width="1.5" PointX="2.75" PointY="2.25" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

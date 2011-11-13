@@ -1,0 +1,785 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ShadowMudModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="ShadowMudModelStoreContainer">
+          <EntitySet Name="Attribute" EntityType="ShadowMudModel.Store.Attribute" store:Type="Tables" />
+          <EntitySet Name="Character" EntityType="ShadowMudModel.Store.Character" store:Type="Tables" />
+          <EntitySet Name="Exit" EntityType="ShadowMudModel.Store.Exit" store:Type="Tables" />
+          <EntitySet Name="ExitKeyword" EntityType="ShadowMudModel.Store.ExitKeyword" store:Type="Tables" />
+          <EntitySet Name="Finances" EntityType="ShadowMudModel.Store.Finances" store:Type="Tables" />
+          <EntitySet Name="Item" EntityType="ShadowMudModel.Store.Item" store:Type="Tables" />
+          <EntitySet Name="ItemKeyword" EntityType="ShadowMudModel.Store.ItemKeyword" store:Type="Tables" />
+          <EntitySet Name="ItemWearLocation" EntityType="ShadowMudModel.Store.ItemWearLocation" store:Type="Tables" />
+          <EntitySet Name="Room" EntityType="ShadowMudModel.Store.Room" store:Type="Tables" />
+          <EntitySet Name="State" EntityType="ShadowMudModel.Store.State" store:Type="Tables" />
+          <EntitySet Name="Text" EntityType="ShadowMudModel.Store.Text" store:Type="Tables" />
+          <EntitySet Name="Zone" EntityType="ShadowMudModel.Store.Zone" store:Type="Tables" />
+          <AssociationSet Name="FK_Attribute_Character" Association="ShadowMudModel.Store.FK_Attribute_Character">
+            <End Role="Character" EntitySet="Character" />
+            <End Role="Attribute" EntitySet="Attribute" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Exit_Room_Destination" Association="ShadowMudModel.Store.FK_Exit_Room_Destination">
+            <End Role="Room" EntitySet="Room" />
+            <End Role="Exit" EntitySet="Exit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Exit_Room_Source" Association="ShadowMudModel.Store.FK_Exit_Room_Source">
+            <End Role="Room" EntitySet="Room" />
+            <End Role="Exit" EntitySet="Exit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ExitKeyword_Exit" Association="ShadowMudModel.Store.FK_ExitKeyword_Exit">
+            <End Role="Exit" EntitySet="Exit" />
+            <End Role="ExitKeyword" EntitySet="ExitKeyword" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Finances_Character" Association="ShadowMudModel.Store.FK_Finances_Character">
+            <End Role="Character" EntitySet="Character" />
+            <End Role="Finances" EntitySet="Finances" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ItemKeyword_Item" Association="ShadowMudModel.Store.FK_ItemKeyword_Item">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="ItemKeyword" EntitySet="ItemKeyword" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ItemWearLocation_Item" Association="ShadowMudModel.Store.FK_ItemWearLocation_Item">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="ItemWearLocation" EntitySet="ItemWearLocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Room_Zone" Association="ShadowMudModel.Store.FK_Room_Zone">
+            <End Role="Zone" EntitySet="Zone" />
+            <End Role="Room" EntitySet="Room" />
+          </AssociationSet>
+          <AssociationSet Name="FK_State_Character" Association="ShadowMudModel.Store.FK_State_Character">
+            <End Role="Character" EntitySet="Character" />
+            <End Role="State" EntitySet="State" />
+          </AssociationSet>
+          <AssociationSet Name="FK_State_Room" Association="ShadowMudModel.Store.FK_State_Room">
+            <End Role="Room" EntitySet="Room" />
+            <End Role="State" EntitySet="State" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Attribute">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Agility" Type="int" Nullable="false" />
+          <Property Name="Body" Type="int" Nullable="false" />
+          <Property Name="Charisma" Type="int" Nullable="false" />
+          <Property Name="Edge" Type="int" Nullable="false" />
+          <Property Name="Essence" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Intuition" Type="int" Nullable="false" />
+          <Property Name="Logic" Type="int" Nullable="false" />
+          <Property Name="Magic" Type="int" Nullable="false" />
+          <Property Name="Reaction" Type="int" Nullable="false" />
+          <Property Name="Resonance" Type="int" Nullable="false" />
+          <Property Name="Strength" Type="int" Nullable="false" />
+          <Property Name="Willpower" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Character">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Awakened" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="Gender" Type="int" Nullable="false" />
+          <Property Name="Height" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Metatype" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="Weight" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Exit">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="500" />
+          <Property Name="Direction" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="KeyId" Type="int" />
+          <Property Name="SourceRoomId" Type="int" Nullable="false" />
+          <Property Name="DestinationRoomId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ExitKeyword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Keyword" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="ExitId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Finances">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Amount" Type="int" Nullable="false" />
+          <Property Name="Currency" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CharacterId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="IsContainer" Type="bit" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Value" Type="int" Nullable="false" />
+          <Property Name="Weight" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ItemKeyword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Keyword" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ItemWearLocation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Location" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Room">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="250" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="ZoneId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="State">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="PhysicalMonitor" Type="int" Nullable="false" />
+          <Property Name="StunMonitor" Type="int" Nullable="false" />
+          <Property Name="CurrentRoom" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Text">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Data" Type="nvarchar" Nullable="false" MaxLength="1024" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Zone">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="250" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="100" />
+        </EntityType>
+        <Association Name="FK_Attribute_Character">
+          <End Role="Character" Type="ShadowMudModel.Store.Character" Multiplicity="1" />
+          <End Role="Attribute" Type="ShadowMudModel.Store.Attribute" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Attribute">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Exit_Room_Destination">
+          <End Role="Room" Type="ShadowMudModel.Store.Room" Multiplicity="1" />
+          <End Role="Exit" Type="ShadowMudModel.Store.Exit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Room">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Exit">
+              <PropertyRef Name="DestinationRoomId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Exit_Room_Source">
+          <End Role="Room" Type="ShadowMudModel.Store.Room" Multiplicity="1" />
+          <End Role="Exit" Type="ShadowMudModel.Store.Exit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Room">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Exit">
+              <PropertyRef Name="SourceRoomId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ExitKeyword_Exit">
+          <End Role="Exit" Type="ShadowMudModel.Store.Exit" Multiplicity="1" />
+          <End Role="ExitKeyword" Type="ShadowMudModel.Store.ExitKeyword" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Exit">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ExitKeyword">
+              <PropertyRef Name="ExitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Finances_Character">
+          <End Role="Character" Type="ShadowMudModel.Store.Character" Multiplicity="1" />
+          <End Role="Finances" Type="ShadowMudModel.Store.Finances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Finances">
+              <PropertyRef Name="CharacterId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ItemKeyword_Item">
+          <End Role="Item" Type="ShadowMudModel.Store.Item" Multiplicity="1" />
+          <End Role="ItemKeyword" Type="ShadowMudModel.Store.ItemKeyword" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ItemKeyword">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ItemWearLocation_Item">
+          <End Role="Item" Type="ShadowMudModel.Store.Item" Multiplicity="1" />
+          <End Role="ItemWearLocation" Type="ShadowMudModel.Store.ItemWearLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ItemWearLocation">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Room_Zone">
+          <End Role="Zone" Type="ShadowMudModel.Store.Zone" Multiplicity="1" />
+          <End Role="Room" Type="ShadowMudModel.Store.Room" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zone">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Room">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_State_Character">
+          <End Role="Character" Type="ShadowMudModel.Store.Character" Multiplicity="1" />
+          <End Role="State" Type="ShadowMudModel.Store.State" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="State">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_State_Room">
+          <End Role="Room" Type="ShadowMudModel.Store.Room" Multiplicity="1" />
+          <End Role="State" Type="ShadowMudModel.Store.State" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Room">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="State">
+              <PropertyRef Name="CurrentRoom" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Model" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="false">
+          <EntitySet Name="Exits" EntityType="Model.Exit" />
+          <EntitySet Name="ExitKeywords" EntityType="Model.ExitKeyword" />
+          <AssociationSet Name="FK_ExitKeyword_Exit" Association="Model.FK_ExitKeyword_Exit">
+            <End Role="Exit" EntitySet="Exits" />
+            <End Role="ExitKeyword" EntitySet="ExitKeywords" />
+          </AssociationSet>
+          <EntitySet Name="Attributes" EntityType="Model.Attribute" />
+          <EntitySet Name="Characters" EntityType="Model.Character" />
+          <EntitySet Name="Finances" EntityType="Model.Finance" />
+          <AssociationSet Name="FK_Attribute_Character" Association="Model.FK_Attribute_Character">
+            <End Role="Character" EntitySet="Characters" />
+            <End Role="Attribute" EntitySet="Attributes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Finances_Character" Association="Model.FK_Finances_Character">
+            <End Role="Character" EntitySet="Characters" />
+            <End Role="Finance" EntitySet="Finances" />
+          </AssociationSet>
+          <EntitySet Name="Items" EntityType="Model.Item" />
+          <EntitySet Name="ItemKeywords" EntityType="Model.ItemKeyword" />
+          <EntitySet Name="ItemWearLocations" EntityType="Model.ItemWearLocation" />
+          <AssociationSet Name="FK_ItemKeyword_Item" Association="Model.FK_ItemKeyword_Item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="ItemKeyword" EntitySet="ItemKeywords" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ItemWearLocation_Item" Association="Model.FK_ItemWearLocation_Item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="ItemWearLocation" EntitySet="ItemWearLocations" />
+          </AssociationSet>
+          <EntitySet Name="Zones" EntityType="Model.Zone" />
+          <EntitySet Name="Texts" EntityType="Model.Text" />
+          <EntitySet Name="Rooms" EntityType="Model.Room" />
+          <AssociationSet Name="FK_Exit_Room_Destination" Association="Model.FK_Exit_Room_Destination">
+            <End Role="Room" EntitySet="Rooms" />
+            <End Role="Exit" EntitySet="Exits" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Exit_Room_Source" Association="Model.FK_Exit_Room_Source">
+            <End Role="Room" EntitySet="Rooms" />
+            <End Role="Exit" EntitySet="Exits" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Room_Zone" Association="Model.FK_Room_Zone">
+            <End Role="Zone" EntitySet="Zones" />
+            <End Role="Room" EntitySet="Rooms" />
+          </AssociationSet>
+          <EntitySet Name="States" EntityType="Model.State" />
+          <AssociationSet Name="FK_State_Character" Association="Model.FK_State_Character">
+            <End Role="Character" EntitySet="Characters" />
+            <End Role="State" EntitySet="States" />
+          </AssociationSet>
+          <AssociationSet Name="FK_State_Room" Association="Model.FK_State_Room">
+            <End Role="Room" EntitySet="Rooms" />
+            <End Role="State" EntitySet="States" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Exit">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="DestinationRoomId" Nullable="false" />
+          <Property Type="Int32" Name="Direction" Nullable="false" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="KeyId" />
+          <Property Type="Int32" Name="SourceRoomId" Nullable="false" />
+          <NavigationProperty Name="ExitKeywords" Relationship="Model.FK_ExitKeyword_Exit" FromRole="Exit" ToRole="ExitKeyword" />
+          <NavigationProperty Name="Room" Relationship="Model.FK_Exit_Room_Destination" FromRole="Exit" ToRole="Room" />
+          <NavigationProperty Name="Room1" Relationship="Model.FK_Exit_Room_Source" FromRole="Exit" ToRole="Room" />
+        </EntityType>
+        <EntityType Name="ExitKeyword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Keyword" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ExitId" Nullable="false" />
+          <NavigationProperty Name="Exit" Relationship="Model.FK_ExitKeyword_Exit" FromRole="ExitKeyword" ToRole="Exit" />
+        </EntityType>
+        <Association Name="FK_ExitKeyword_Exit">
+          <End Type="Model.Exit" Role="Exit" Multiplicity="1" />
+          <End Type="Model.ExitKeyword" Role="ExitKeyword" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Exit">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ExitKeyword">
+              <PropertyRef Name="ExitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Attribute">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Agility" Nullable="false" />
+          <Property Type="Int32" Name="Body" Nullable="false" />
+          <Property Type="Int32" Name="Charisma" Nullable="false" />
+          <Property Type="Int32" Name="Edge" Nullable="false" />
+          <Property Type="Int32" Name="Essence" Nullable="false" />
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="Int32" Name="Intuition" Nullable="false" />
+          <Property Type="Int32" Name="Logic" Nullable="false" />
+          <Property Type="Int32" Name="Magic" Nullable="false" />
+          <Property Type="Int32" Name="Reaction" Nullable="false" />
+          <Property Type="Int32" Name="Resonance" Nullable="false" />
+          <Property Type="Int32" Name="Strength" Nullable="false" />
+          <Property Type="Int32" Name="Willpower" Nullable="false" />
+          <NavigationProperty Name="Character" Relationship="Model.FK_Attribute_Character" FromRole="Attribute" ToRole="Character" />
+        </EntityType>
+        <EntityType Name="Character">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Awakened" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="Gender" Nullable="false" />
+          <Property Type="Int32" Name="Height" Nullable="false" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Metatype" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Password" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="Weight" Nullable="false" />
+          <NavigationProperty Name="Attribute" Relationship="Model.FK_Attribute_Character" FromRole="Character" ToRole="Attribute" />
+          <NavigationProperty Name="Finances" Relationship="Model.FK_Finances_Character" FromRole="Character" ToRole="Finance" />
+          <NavigationProperty Name="State" Relationship="Model.FK_State_Character" FromRole="Character" ToRole="State" />
+        </EntityType>
+        <EntityType Name="Finance">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Amount" Nullable="false" />
+          <Property Type="Int32" Name="Currency" Nullable="false" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="CharacterId" Nullable="false" />
+          <NavigationProperty Name="Character" Relationship="Model.FK_Finances_Character" FromRole="Finance" ToRole="Character" />
+        </EntityType>
+        <Association Name="FK_Attribute_Character">
+          <End Type="Model.Character" Role="Character" Multiplicity="1" />
+          <End Type="Model.Attribute" Role="Attribute" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Attribute">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Finances_Character">
+          <End Type="Model.Character" Role="Character" Multiplicity="1" />
+          <End Type="Model.Finance" Role="Finance" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Finance">
+              <PropertyRef Name="CharacterId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Boolean" Name="IsContainer" Nullable="false" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="Type" Nullable="false" />
+          <Property Type="Int32" Name="Value" Nullable="false" />
+          <Property Type="Int32" Name="Weight" Nullable="false" />
+          <NavigationProperty Name="ItemKeywords" Relationship="Model.FK_ItemKeyword_Item" FromRole="Item" ToRole="ItemKeyword" />
+          <NavigationProperty Name="ItemWearLocations" Relationship="Model.FK_ItemWearLocation_Item" FromRole="Item" ToRole="ItemWearLocation" />
+        </EntityType>
+        <EntityType Name="ItemKeyword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="String" Name="Keyword" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ItemId" Nullable="false" />
+          <NavigationProperty Name="Item" Relationship="Model.FK_ItemKeyword_Item" FromRole="ItemKeyword" ToRole="Item" />
+        </EntityType>
+        <EntityType Name="ItemWearLocation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Location" Nullable="false" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ItemId" Nullable="false" />
+          <NavigationProperty Name="Item" Relationship="Model.FK_ItemWearLocation_Item" FromRole="ItemWearLocation" ToRole="Item" />
+        </EntityType>
+        <Association Name="FK_ItemKeyword_Item">
+          <End Type="Model.Item" Role="Item" Multiplicity="1" />
+          <End Type="Model.ItemKeyword" Role="ItemKeyword" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ItemKeyword">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ItemWearLocation_Item">
+          <End Type="Model.Item" Role="Item" Multiplicity="1" />
+          <End Type="Model.ItemWearLocation" Role="ItemWearLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ItemWearLocation">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Zone">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Rooms" Relationship="Model.FK_Room_Zone" FromRole="Zone" ToRole="Room" />
+        </EntityType>
+        <EntityType Name="Text">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="String" Name="Data" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Room">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ZoneId" Nullable="false" />
+          <NavigationProperty Name="Entrances" Relationship="Model.FK_Exit_Room_Destination" FromRole="Room" ToRole="Exit" />
+          <NavigationProperty Name="Exits" Relationship="Model.FK_Exit_Room_Source" FromRole="Room" ToRole="Exit" />
+          <NavigationProperty Name="Zone" Relationship="Model.FK_Room_Zone" FromRole="Room" ToRole="Zone" />
+          <NavigationProperty Name="States" Relationship="Model.FK_State_Room" FromRole="Room" ToRole="State" />
+        </EntityType>
+        <Association Name="FK_Exit_Room_Destination">
+          <End Type="Model.Room" Role="Room" Multiplicity="1" />
+          <End Type="Model.Exit" Role="Exit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Room">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Exit">
+              <PropertyRef Name="DestinationRoomId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Exit_Room_Source">
+          <End Type="Model.Room" Role="Room" Multiplicity="1" />
+          <End Type="Model.Exit" Role="Exit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Room">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Exit">
+              <PropertyRef Name="SourceRoomId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Room_Zone">
+          <End Type="Model.Zone" Role="Zone" Multiplicity="1" />
+          <End Type="Model.Room" Role="Room" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zone">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Room">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="State">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="CurrentRoom" Nullable="false" />
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="Int32" Name="PhysicalMonitor" Nullable="false" />
+          <Property Type="Int32" Name="StunMonitor" Nullable="false" />
+          <NavigationProperty Name="Character" Relationship="Model.FK_State_Character" FromRole="State" ToRole="Character" />
+          <NavigationProperty Name="Room" Relationship="Model.FK_State_Room" FromRole="State" ToRole="Room" />
+        </EntityType>
+        <Association Name="FK_State_Character">
+          <End Type="Model.Character" Role="Character" Multiplicity="1" />
+          <End Type="Model.State" Role="State" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Character">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="State">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_State_Room">
+          <End Type="Model.Room" Role="Room" Multiplicity="1" />
+          <End Type="Model.State" Role="State" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Room">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="State">
+              <PropertyRef Name="CurrentRoom" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ShadowMudModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="Exits">
+            <EntityTypeMapping TypeName="Model.Exit">
+              <MappingFragment StoreEntitySet="Exit">
+                <ScalarProperty Name="DestinationRoomId" ColumnName="DestinationRoomId" />
+                <ScalarProperty Name="SourceRoomId" ColumnName="SourceRoomId" />
+                <ScalarProperty Name="KeyId" ColumnName="KeyId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Direction" ColumnName="Direction" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExitKeywords">
+            <EntityTypeMapping TypeName="Model.ExitKeyword">
+              <MappingFragment StoreEntitySet="ExitKeyword">
+                <ScalarProperty Name="ExitId" ColumnName="ExitId" />
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Attributes">
+            <EntityTypeMapping TypeName="Model.Attribute">
+              <MappingFragment StoreEntitySet="Attribute">
+                <ScalarProperty Name="Willpower" ColumnName="Willpower" />
+                <ScalarProperty Name="Strength" ColumnName="Strength" />
+                <ScalarProperty Name="Resonance" ColumnName="Resonance" />
+                <ScalarProperty Name="Reaction" ColumnName="Reaction" />
+                <ScalarProperty Name="Magic" ColumnName="Magic" />
+                <ScalarProperty Name="Logic" ColumnName="Logic" />
+                <ScalarProperty Name="Intuition" ColumnName="Intuition" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Essence" ColumnName="Essence" />
+                <ScalarProperty Name="Edge" ColumnName="Edge" />
+                <ScalarProperty Name="Charisma" ColumnName="Charisma" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="Agility" ColumnName="Agility" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Characters">
+            <EntityTypeMapping TypeName="Model.Character">
+              <MappingFragment StoreEntitySet="Character">
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Metatype" ColumnName="Metatype" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Awakened" ColumnName="Awakened" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Finances">
+            <EntityTypeMapping TypeName="Model.Finance">
+              <MappingFragment StoreEntitySet="Finances">
+                <ScalarProperty Name="CharacterId" ColumnName="CharacterId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Items">
+            <EntityTypeMapping TypeName="Model.Item">
+              <MappingFragment StoreEntitySet="Item">
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="IsContainer" ColumnName="IsContainer" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ItemKeywords">
+            <EntityTypeMapping TypeName="Model.ItemKeyword">
+              <MappingFragment StoreEntitySet="ItemKeyword">
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ItemWearLocations">
+            <EntityTypeMapping TypeName="Model.ItemWearLocation">
+              <MappingFragment StoreEntitySet="ItemWearLocation">
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Zones">
+            <EntityTypeMapping TypeName="Model.Zone">
+              <MappingFragment StoreEntitySet="Zone">
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Texts">
+            <EntityTypeMapping TypeName="Model.Text">
+              <MappingFragment StoreEntitySet="Text">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Rooms">
+            <EntityTypeMapping TypeName="Model.Room">
+              <MappingFragment StoreEntitySet="Room">
+                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="States">
+            <EntityTypeMapping TypeName="Model.State">
+              <MappingFragment StoreEntitySet="State">
+                <ScalarProperty Name="CurrentRoom" ColumnName="CurrentRoom" />
+                <ScalarProperty Name="StunMonitor" ColumnName="StunMonitor" />
+                <ScalarProperty Name="PhysicalMonitor" ColumnName="PhysicalMonitor" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

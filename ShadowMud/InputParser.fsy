@@ -1,0 +1,62 @@
+﻿%{
+open ShadowMud
+open ShadowMud.Data
+open ShadowMud.Input
+%}   
+ 
+%token <string> TEXT   
+%token <int> INT   
+%token <float> FLOAT   
+
+%token NAME DESCRIPTION KEYWORDS FLAGS KEYID TARGET
+%token NORTH NORTHEAST NORTHWEST EAST WEST SOUTH SOUTHEAST SOUTHWEST UP DOWN
+%token GO LOOK SAVE SAY
+%token NPC OBJECT ROOM EXIT
+%token EOF   
+
+// start
+%start start
+%type <InputCommand> start
+ 
+%%   
+ 
+start	:   go EOF				{InputCommand.Go $1}
+			|   look EOF			{InputCommand.Look $1}
+			|   save EOF			{InputCommand.Save $1}
+			|   say EOF				{InputCommand.Say $1}
+			;
+
+say	:	SAY							{None}
+	|	SAY TEXT					{Some $2}
+	;
+
+
+look	:	LOOK					{(None, None)}
+		|	LOOK TEXT				{(None, Some $2)}
+		|	LOOK direction			{(Some $2, None)}
+		;
+
+go	:	GO							{(None, None)}
+	|	GO TEXT						{(None, Some $2)}
+	|	GO direction				{(Some $2, None)}
+	|	GO direction TEXT			{(Some $2, None)}
+	|	direction					{(Some $1, None)}
+	;
+
+save	:	SAVE					{None}
+		|	SAVE TEXT				{Some $2}
+		;
+
+direction	:	NORTH				{Direction.North}
+			|	NORTHEAST			{Direction.Northeast}
+			|	NORTHWEST			{Direction.Northwest}
+			|	EAST				{Direction.East}
+			|	WEST				{Direction.West}
+			|	SOUTH				{Direction.South}
+			|	SOUTHEAST			{Direction.Southeast}
+			|	SOUTHWEST			{Direction.Southwest}
+			|	UP					{Direction.Up}
+			|	DOWN				{Direction.Down}
+			;
+
+%%

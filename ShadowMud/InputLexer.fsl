@@ -1,0 +1,56 @@
+﻿{   
+module ShadowMud.InputLexer
+open System
+open ShadowMud.InputParser
+open Microsoft.FSharp.Text.Lexing
+
+let tokens =
+    [   
+        "go", GO;
+        "look", LOOK;
+        "save", SAVE;
+        "say", SAY;
+        "north", NORTH;
+        "northeast", NORTHEAST;
+        "northwest", NORTHWEST;
+        "east", EAST;
+        "west", WEST;
+        "south", SOUTH;
+        "southeast", SOUTHEAST;
+        "southwest", SOUTHWEST;
+        "up", UP;
+        "down", DOWN;
+        "name", NAME;
+        "description", DESCRIPTION;
+        "keywords", KEYWORDS;
+        "flags", FLAGS;
+        "keyid", KEYID;
+        "target", TARGET;
+    ] |> Map.ofList
+
+
+let lexeme lexbuf =
+    LexBuffer<char>.LexemeString lexbuf
+}
+
+// regex macros
+let char        = ['a'-'z' 'A'-'Z']
+let digit       = ['0'-'9']
+let int         = '-'?digit+
+let float       = '-'?digit+ '.' digit+
+let whitespace  = [' ' '\t']
+let newline     = "\r\n" | "\n\r" | '\n' | '\r'
+let symbol      = ['!'-'/'] | [':'-'@'] | ['['-'`'] | ['{'-'~']
+let identifier  = ((char | symbol)(char | digit |symbol)* | digit+(char | symbol)(char | digit | symbol)*)
+let newline     = "\n\r" | "\r\n" | '\n' | '\r'
+ 
+// rules   
+rule tokenize = parse   
+| whitespace    { tokenize lexbuf }
+| newline       { lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
+| int           { INT(Int32.Parse(lexeme lexbuf)) }
+| float         { FLOAT(Double.Parse(lexeme lexbuf)) }
+| identifier    { match tokens.TryFind(lexeme lexbuf) with   
+                  | Some(token) -> token   
+                  | None -> TEXT(lexeme lexbuf) }
+| eof           { EOF }
