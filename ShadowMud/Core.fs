@@ -32,50 +32,8 @@ let private handleClientInput (client : Client) =
         let command = InputParser.start InputLexer.tokenize lexbuf
         Server.SendMessage(Input.Handle (client, command), client.SessionId)
 
-let private handleClientLoop (client : Client) =
+let private handleClient (client : Client) =
     async { handleClientInput client }
-
-let private handleLoginLoop (loginInfo : LoginInfo, input : string, clientList : List<Client>) =
-    async { let processName (name : string) =
-                async { if Characters.checkCharacter name then
-                            Server.SendMessage ("If you are who you say you are, you should know the\r\npassword: ", loginInfo.SessionId)
-                            return ({ loginInfo with State = TestPassword name }, None)
-                        else
-                            Server.SendMessage (String.Format("Is that so, you say your name is {0}?.\r\n", name), loginInfo.SessionId)
-                            return ({ loginInfo with State =  CreateCharacter (CreateData (VerifyName name)) }, None) }
-
-            let testPassword (name : string, password : string) =
-                async { match Characters.checkPassword (name, password) with
-                        | true ->
-                            Server.SendMessage (String.Format("Oh, why didn't you say so sooner. Welcome, {0}.\r\n", name), loginInfo.SessionId)
-                            match clientList |> List.tryFind (fun c -> c.Character.Data.Name = name) with
-                            | Some client -> 
-                                Server.SendMessage (Rooms.lookRoom (client, client.CurrentRoom, true), loginInfo.SessionId)
-                                return (loginInfo, None)
-                            | None ->
-                                let character = Characters.loadCharacter name
-                                let client = new Client (character, loginInfo.SessionId)
-                                Rooms.addToRoom (client, client.CurrentRoom)
-                                Server.SendMessage (Rooms.lookRoom (client, client.CurrentRoom, true), loginInfo.SessionId)
-                                return (loginInfo, Some client)
-                        | false ->
-                            Server.SendMessage ("I don't think so buddy, who are you really?\r\n", loginInfo.SessionId)
-                            return ({ loginInfo with State = TestName }, None) }
-
-            if input = "" then return (loginInfo, None) else
-                match loginInfo.State with
-                | TestName -> return! processName input
-                | TestPassword name -> return! testPassword (name, input)
-                | CreateCharacter createState ->
-                    match createState with
-                    | CreateData dataState ->
-                        let loginInfo, message = HandleCreateData(dataState, input, loginInfo)
-                        Server.SendMessage(message, loginInfo.SessionId)
-                        return (loginInfo, None)
-                    | CreateAttributes attributeState ->
-                        let loginInfo, message = HandleCreateAttributes(attributeState, input, loginInfo)
-                        Server.SendMessage(message, loginInfo.SessionId)
-                        return (loginInfo, None) }
 
 let private agent = Agent.Start (fun inbox ->
     let rec loop (clientList : List<Client>, loginMap : Map<LoginInfo, StringQueue>) =
@@ -104,8 +62,7 @@ let private agent = Agent.Start (fun inbox ->
                             | Some loginInfo ->
                                 let queue = inputList |> List.fold (fun (state : StringQueue) input -> state.Enqueue input) loginMap.[loginInfo]
                                 Some (loginMap.Add (loginInfo, queue))
-                            | None -> 
-                                None
+                            | None -> None
                     ) None
                 rc.Reply ()
                 match resultOption with
@@ -117,13 +74,13 @@ let private agent = Agent.Start (fun inbox ->
             | ClientLoop rc ->
                 let! a = clientList
                             |> List.toSeq
-                            |> Seq.map (fun client -> async { return! handleClientLoop client })
+                            |> Seq.map (fun client -> async { return! handleClient client })
                             |> Async.Parallel
                     
                 rc.Reply ()
                 return! loop (clientList, loginMap)
             | LoginLoop ->
-                let! resultArray =
+                let! resultsArray =
                     loginMap
                     |> Map.fold (fun state key inputQueue ->
                         if inputQueue.IsEmpty then
@@ -133,20 +90,34 @@ let private agent = Agent.Start (fun inbox ->
                         ) Map.empty
                     |> Map.toSeq
                     |> Seq.map (fun (loginInfo, (newQueue, input)) ->
-                        async { let! result = handleLoginLoop (loginInfo, input, clientList)
-                                return (result, newQueue) } )
+                        async { if input = String.Empty then
+                                    return (loginInfo, newQueue)
+                                else
+                                    let! loginInfoState = Login.Handle (loginInfo, input)
+                                    return (loginInfoState, newQueue)
+                              } )
                     |> Async.Parallel
-                return! loop (  resultArray
-                                |> List.ofArray
-                                |> List.fold (fun (clients, logins) ((loginInfo, clientOption), newQueue) ->
-                                    match clientOption with
-                                    | None ->
-                                        (clients, logins |> Map.add loginInfo newQueue)
-                                    | Some client ->
-                                        if clientList |> List.exists (fun c -> c = client) then
-                                            (clients, logins)
-                                        else (client :: clients, logins)
-                             ) (List.empty, Map.empty) )
+                return! loop (resultsArray
+                             |> List.ofArray
+                             |> List.fold (fun (clients, logins) (loginInfo, newQueue) ->
+                                 match loginInfo.OutputMessage with
+                                 | Some message -> Server.SendMessage (message, loginInfo.SessionId)
+                                 | None -> ()
+                                 match loginInfo.State with
+                                 | Authenticated name ->
+                                     match clientList |> List.tryFind (fun c -> c.Character.Data.Name = name) with
+                                     | Some client -> 
+                                         client.SessionId <- loginInfo.SessionId
+                                         Server.SendMessage (Rooms.lookRoom (client, client.CurrentRoom, true), loginInfo.SessionId)
+                                         (clients, logins)
+                                     | None ->
+                                         let character = Characters.loadCharacter name
+                                         let client = new Client (character, loginInfo.SessionId)
+                                         Rooms.addToRoom (client, client.CurrentRoom)
+                                         Server.SendMessage (Rooms.lookRoom (client, client.CurrentRoom, true), loginInfo.SessionId)
+                                         (client :: clients, logins)
+                                 | _ -> (clients, logins |> Map.add { loginInfo with OutputMessage = None } newQueue)
+                             ) (List.empty, Map.empty))
             | IsClientsEmpty rc ->
                 rc.Reply (clientList.IsEmpty)
                 return! loop (clientList, loginMap)
@@ -170,7 +141,8 @@ let private updateInput () = agent.PostAndReply(fun rc -> RetrieveInput rc)
 let ExitGame client = agent.Post (ExitGame client)
 
 let rec private gameLoop () =
-    async { updateLogins ()
+    async {
+            updateLogins ()
             updateInput ()
 
             if not (isLoginsEmpty ()) then
@@ -180,7 +152,8 @@ let rec private gameLoop () =
                 clientLoop ()
                     
             do! Async.Sleep 1
-            return! gameLoop () }
+            return! gameLoop ()
+          }
 
 Async.Start (Server.Start ())
 Async.RunSynchronously (gameLoop ())

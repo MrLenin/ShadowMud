@@ -52,6 +52,10 @@ type Character =
         State : State
     }
 
+let newData : Data = { Description = String.Empty; Gender = Gender.Male; Height = 0; Id = 0; Awakened = Awakened.Unawakened; Metatype = Metatype.Human; Name = String.Empty; Password = String.Empty; Title = String.Empty; Weight = 0 }
+let newState : State = { CurrentRoom = 1; PhysicalMonitor = 1; StunMonitor = 1 }
+let newCharacter (attributes, data, nuyen, state) : Character = { Attributes = attributes; Data = data; Finances = Map.empty.Add(Currency.Nuyen, nuyen); State = state }
+
 type private ClientCommands =
     | EnqueueInput of string
     | DequeueInput of AsyncReplyChannel<string>

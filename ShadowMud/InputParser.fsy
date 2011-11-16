@@ -21,10 +21,11 @@ open ShadowMud.Input
 %%   
  
 start	:   go EOF				{InputCommand.Go $1}
-			|   look EOF			{InputCommand.Look $1}
-			|   save EOF			{InputCommand.Save $1}
-			|   say EOF				{InputCommand.Say $1}
-			;
+		|   look EOF			{InputCommand.Look $1}
+		|   save EOF			{InputCommand.Save $1}
+		|   say EOF				{InputCommand.Say $1}
+		|	TEXT				{InputCommand.Gibberish $1}
+		;
 
 say	:	SAY							{None}
 	|	SAY TEXT					{Some $2}

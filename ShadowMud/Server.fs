@@ -55,20 +55,13 @@ let private agent = Agent.Start (fun inbox ->
                             return! loop (clientMap, inputMap, logins)
 
                     | None ->  return! loop (clientMap, inputMap, logins)
-
                 | AddInput (sessionId, input) ->
                     match inputMap |> Map.tryFind sessionId with
                     | Some inputList -> return! loop (clientMap, inputMap.Add (sessionId, input :: inputList), logins)
                     | None -> return! loop (clientMap, inputMap.Add (sessionId, input :: List.Empty), logins)
-
                 | RetrieveInput rc ->
-                    if inputMap.IsEmpty then
-                        rc.Reply inputMap
-                        return! loop (clientMap, inputMap, logins)
-                    else
-                        rc.Reply inputMap
-                        return! loop (clientMap, Map.empty, logins)
-
+                    rc.Reply inputMap
+                    return! loop (clientMap, Map.empty, logins)
                 | Add (sessionId, stream) ->
                     return! loop (clientMap |> Map.add sessionId stream, inputMap, logins)
                 | AddLogin loginInfo ->
@@ -101,7 +94,7 @@ let private handleClient (connection : TcpClient) =
             let hostname = String.Empty//try (Dns.GetHostEntry ipAddress).HostName // this shit slows down connecting
                             //with | exn -> String.Empty
 
-            let loginInfo = { Login.newLoginInfo with IpAddress = ipAddress; Hostname = hostname }
+            let loginInfo = { Login.newLoginInfo with IpAddress = ipAddress; Hostname = hostname; OutputMessage = Some "What is your name?\r\n" }
             let networkStream = connection.GetStream ()
 
             AddClient (loginInfo.SessionId, networkStream)
@@ -124,10 +117,10 @@ let private handleClient (connection : TcpClient) =
                                   match allText with
                                   | "\0" -> return! closeConnection stream
                                   | "\r\n" -> return! asyncReadStream stream
+                                  | "\n" -> return! asyncReadStream stream
                                   | _ -> addInput (loginInfo.SessionId, allText.Replace (Environment.NewLine, ""))
                                          return! asyncReadStream stream }
 
-            SendMessage ("What is your name?\r\n", loginInfo.SessionId)
             return! asyncReadStream (networkStream) }
 
 let rec private handleConnections () =
