@@ -14,9 +14,6 @@ type private String = System.String
 type private TcpClient = System.Net.Sockets.TcpClient
 type private TcpListener = System.Net.Sockets.TcpListener
 
-type private LoginInfo = Login.LoginInfo
-type private LoginState = Login.LoginState
-
 
 type private System.Net.Sockets.TcpListener with
     member tl.AsyncAcceptTcpClient () =
@@ -29,116 +26,129 @@ type private System.Net.Sockets.Socket with
         with _ -> false
 
 type private ClientTableCommands =
-    | Add of (Guid * NetworkStream)
-    | Remove of (Guid * AsyncReplyChannel<unit>)
-    | AddLogin of LoginInfo
-    | RetrieveLogins of AsyncReplyChannel<LoginInfo list>
+    | AddSession of (Guid * NetworkStream)
+    | RemoveSession of (Guid * AsyncReplyChannel<unit>)
+    | StoreLogin of (Guid * string)
+    | RetrieveLogins of AsyncReplyChannel<Map<Guid, string>>
     | SendMessage of (string * Guid)
-    | AddInput of (Guid * string)
-    | RetrieveInput of AsyncReplyChannel<Map<Guid, string list>>
+    | StoreInput of (Guid * string)
+    | RetrieveInput of (Guid list * AsyncReplyChannel<Map<Guid, string list>>)
 
 let private listener = new TcpListener (IPAddress.Loopback, 4242)
 let private sendBufferSize = 24*1024
 
 let private agent = Agent.Start (fun inbox ->
-    let rec loop (clientMap : Map<Guid, NetworkStream>, inputMap : Map<Guid, string list>, logins : LoginInfo list) =
-        async { let! msg = inbox.Receive ()
-                match msg with
-                | SendMessage (msg, clientId) ->
-                    match clientMap.TryFind clientId with
-                    | Some stream ->
-                        if stream.CanWrite then
-                            let buffer = Encoding.ASCII.GetBytes (msg.ToCharArray ())
-                            do! stream.AsyncWrite buffer
-                            return! loop (clientMap, inputMap, logins)
-                        else
-                            return! loop (clientMap, inputMap, logins)
+    let rec loop (sessionMap, inputMap, loginMap) = async {
+        let sessionMap : Map<Guid, NetworkStream> = sessionMap
+        let inputMap : Map<Guid, string list> = inputMap
+        let loginMap : Map<Guid, string> = loginMap
 
-                    | None ->  return! loop (clientMap, inputMap, logins)
-                | AddInput (sessionId, input) ->
-                    match inputMap |> Map.tryFind sessionId with
-                    | Some inputList -> return! loop (clientMap, inputMap.Add (sessionId, input :: inputList), logins)
-                    | None -> return! loop (clientMap, inputMap.Add (sessionId, input :: List.Empty), logins)
-                | RetrieveInput rc ->
-                    rc.Reply inputMap
-                    return! loop (clientMap, Map.empty, logins)
-                | Add (sessionId, stream) ->
-                    return! loop (clientMap |> Map.add sessionId stream, inputMap, logins)
-                | AddLogin loginInfo ->
-                    let newlogins = loginInfo :: logins
-                    return! loop (clientMap, inputMap, newlogins)
-                | RetrieveLogins rc ->
-                    rc.Reply logins
-                    return! loop (clientMap, inputMap, List.Empty)
-                | Remove (sessionId, rc) ->
-                    match clientMap |> Map.tryFindKey (fun key value -> key = sessionId) with
-                    | Some sessionId -> 
-                        rc.Reply ()
-                        return! loop (clientMap |> Map.remove sessionId, inputMap, logins)
-                    | None ->
-                        rc.Reply ()
-                        return! loop (clientMap, inputMap, logins) }
-    loop (Map.empty, Map.empty, List.Empty))
+        let! msg = inbox.Receive ()
+        match msg with
+        | SendMessage (msg, clientId) ->
+            match sessionMap.TryFind clientId with
+            | Some stream ->
+                if stream.CanWrite then
+                    let buffer = Encoding.ASCII.GetBytes (msg.ToCharArray ())
+                    do! stream.AsyncWrite buffer
+                    return! loop (sessionMap, inputMap, loginMap)
+                else
+                    return! loop (sessionMap, inputMap, loginMap)
+            | None ->  return! loop (sessionMap, inputMap, loginMap)
 
-let private addLogin loginInfo = agent.Post (AddLogin loginInfo)
-let private addInput (sessionId, msg) = agent.Post (AddInput (sessionId, msg))
+        | StoreInput (sessionId, input) ->
+            match inputMap |> Map.tryFind sessionId with
+            | Some inputList ->
+                return! loop (sessionMap, inputMap.Add (sessionId, input :: inputList), loginMap)
+            | None ->
+                return! loop (sessionMap, inputMap.Add (sessionId, input :: List.Empty), loginMap)
 
-let AddClient (loginInfo, stream) = agent.Post (Add (loginInfo, stream))
-let RemoveClient sessionId = agent.PostAndReply (fun rc -> Remove (sessionId, rc))
-let RetrieveInput () = agent.PostAndReply (fun rc -> RetrieveInput rc)
+        | RetrieveInput (sessions, rc) ->
+            let result, inputMap =
+                inputMap |> Map.partition (fun key value ->
+                    sessions |> List.exists (fun session -> session = key) )
+            rc.Reply result
+            return! loop (sessionMap, inputMap, loginMap)
+
+        | AddSession (sessionId, stream) ->
+            return! loop (sessionMap |> Map.add sessionId stream, inputMap, loginMap)
+
+        | StoreLogin loginInfo ->
+            return! loop (sessionMap, inputMap, loginMap.Add (loginInfo))
+
+        | RetrieveLogins rc ->
+            rc.Reply loginMap
+            return! loop (sessionMap, inputMap, Map.empty)
+
+        | RemoveSession (sessionId, rc) ->
+            match sessionMap |> Map.tryFindKey (fun key value -> key = sessionId) with
+            | Some sessionId -> 
+                rc.Reply ()
+                return! loop (sessionMap |> Map.remove sessionId, inputMap, loginMap)
+            | None ->
+                rc.Reply ()
+                return! loop (sessionMap, inputMap, loginMap)
+    }
+    loop (Map.empty, Map.empty, Map.empty))
+
+let private storeLogin loginInfo = agent.Post (StoreLogin loginInfo)
+let private storeInput (sessionId, msg) = agent.Post (StoreInput (sessionId, msg))
+let private addSession (loginInfo, stream) = agent.Post (AddSession (loginInfo, stream))
+
+let RemoveSession sessionId = agent.PostAndReply (fun rc -> RemoveSession (sessionId, rc))
+let RetrieveInput sessions = agent.PostAndReply (fun rc -> RetrieveInput (sessions, rc))
 let RetrieveLogins () = agent.PostAndReply (fun rc -> RetrieveLogins rc)
 let SendMessage (dest, msg) = agent.Post (SendMessage (dest, msg))
 
-let private handleClient (connection : TcpClient) =
-    async { let ipAddress = connection.Client.RemoteEndPoint.ToString ()
-            let hostname = String.Empty//try (Dns.GetHostEntry ipAddress).HostName // this shit slows down connecting
-                            //with | exn -> String.Empty
+let private handleClient (connection : TcpClient) = async {
+    let ipAddress = connection.Client.RemoteEndPoint.ToString ()
+    let hostname = String.Empty//try (Dns.GetHostEntry ipAddress).HostName // this shit slows down connecting
+                    //with | exn -> String.Empty
+    let sessionId = Guid.NewGuid ()
+    let networkStream = connection.GetStream ()
 
-            let loginInfo = { Login.newLoginInfo with IpAddress = ipAddress; Hostname = hostname; OutputMessage = Some "What is your name?\r\n" }
-            let networkStream = connection.GetStream ()
+    addSession (sessionId, networkStream)
+    storeLogin (sessionId, ipAddress)
 
-            AddClient (loginInfo.SessionId, networkStream)
-            addLogin loginInfo
+    let closeConnection (stream : NetworkStream) =
+        RemoveSession sessionId
+        stream.Close ()
+        stream.Dispose ()
+        connection.Close ()
 
-            let rec closeConnection (stream : NetworkStream) =
-                async { RemoveClient loginInfo.SessionId
-                        stream.Close ()
-                        stream.Dispose ()
-                        connection.Close ()
-                        return () }
+    let rec asyncReadStream (stream : NetworkStream) = async {
+        if not (Socket.IsConnected connection.Client) then
+            return closeConnection stream
+        else
+            let buffer = Array.create 1024 0uy
+            let! read = stream.AsyncRead (buffer, 0, 1024)
+            let allText = Encoding.ASCII.GetString (buffer, 0, read)
 
-            let rec asyncReadStream (stream : NetworkStream) =
-                async { match Socket.IsConnected connection.Client with
-                        | false -> return! closeConnection stream
-                        | true -> let buffer = Array.create 1024 0uy
-                                  let! read = stream.AsyncRead (buffer, 0, 1024)
-                                  let allText = Encoding.ASCII.GetString (buffer, 0, read)
+            match allText with
+            | "\0" -> return closeConnection stream
+            | "\r\n" -> return! asyncReadStream stream
+            | "\n" -> return! asyncReadStream stream
+            | _ -> storeInput (sessionId, allText.Replace (Environment.NewLine, ""))
+                   return! asyncReadStream stream }
 
-                                  match allText with
-                                  | "\0" -> return! closeConnection stream
-                                  | "\r\n" -> return! asyncReadStream stream
-                                  | "\n" -> return! asyncReadStream stream
-                                  | _ -> addInput (loginInfo.SessionId, allText.Replace (Environment.NewLine, ""))
-                                         return! asyncReadStream stream }
+    return! asyncReadStream (networkStream) }
 
-            return! asyncReadStream (networkStream) }
+let rec private handleConnections () = async {
+    match listener.Pending () with
+    | true ->
+        let! connection = listener.AsyncAcceptTcpClient ()
+        do! handleClient connection
+        return! handleConnections ()
+    | false ->
+        do! Async.Sleep 1
+        return! handleConnections () }
 
-let rec private handleConnections () =
-    async { match listener.Pending () with
-            | true ->
-                let! connection = listener.AsyncAcceptTcpClient ()
-                do! handleClient connection
-                return! handleConnections ()
-            | false ->
-                do! Async.Sleep 1
-                return! handleConnections () }
-
-let Start () =
-    async { listener.Server.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true)
-            listener.Server.LingerState.Enabled <- false
-            listener.Server.LingerState.LingerTime <- 0
-            listener.Server.SendBufferSize <- sendBufferSize
+let Start () = async {
+    listener.Server.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true)
+    listener.Server.LingerState.Enabled <- false
+    listener.Server.LingerState.LingerTime <- 0
+    listener.Server.SendBufferSize <- sendBufferSize
         
-            listener.Start ()
-            return! handleConnections () }
+    listener.Start ()
+    return! handleConnections () }
 

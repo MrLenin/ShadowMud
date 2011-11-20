@@ -66,10 +66,10 @@
   <ItemGroup>
     <None Include="App.config" />
     <Compile Include="Data.fs" />
-    <Compile Include="Characters.fs" />
-    <Compile Include="Rooms.fs" />
-    <Compile Include="Login.fs" />
     <Compile Include="Server.fs" />
+    <Compile Include="Characters.fs" />
+    <Compile Include="Login.fs" />
+    <Compile Include="Rooms.fs" />
     <Compile Include="DiceRoller.fs" />
     <Compile Include="NumberGenerator.fs" />
     <Compile Include="Input.fs" />

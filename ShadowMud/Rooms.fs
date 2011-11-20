@@ -14,7 +14,8 @@ type private Client = Characters.Client
 type Room =
     {   Description : string;
         Id : int;
-        Title : string }
+        Title : string
+    }
 
 type Exit =
     {   Description : string;
@@ -22,11 +23,13 @@ type Exit =
         Direction : Direction;
         Id : int;
         KeyId : Nullable<int>;
-        SourceRoomId : int }
+        SourceRoomId : int
+    }
 
 type ExitKeyword =
     {   Keyword : string;
-        ExitId : int }
+        ExitId : int
+    }
 
 type ExitMap = Map<Direction, Exit>
 type ExitKeywordsMap = Map<Direction, seq<ExitKeyword>>
@@ -45,46 +48,57 @@ type private RoomStateCommands =
 
 type RoomsState (room : Room, exitData : ExitMap, exitKeywords : ExitKeywordsMap) =
     let agent = Agent.Start (fun inbox ->
-        let rec loop (clients, room : Room, exitData : ExitMap, exitKeywords : ExitKeywordsMap) =
-            async { let! msg = inbox.Receive()
-                    match msg with
-                    | AddClient (client, rc) ->
-                        client.CurrentRoom <- room.Id
-                        rc.Reply ()
-                        return! loop (clients @ [ client ], room, exitData, exitKeywords)
-                    | ContainsClient (client, rc) ->
-                        match clients |> List.tryFind (fun c -> c = client) with
-                        | Some value ->
-                            rc.Reply true
-                            return! loop (clients, room, exitData, exitKeywords)
-                        | None ->
-                            rc.Reply false
-                            return! loop (clients, room, exitData, exitKeywords)
-                    | RemoveClient (client, rc) ->
-                        rc.Reply ()
-                        let newClients = clients |> List.filter(fun c -> not (c.Character.Data.Id = client.Character.Data.Id))
-                        return! loop (newClients, room, exitData, exitKeywords)
-                    | GetClients rc ->
-                        rc.Reply clients
-                        return! loop (clients, room, exitData, exitKeywords)
-                    | GetRoom rc ->
-                        rc.Reply room
-                        return! loop (clients, room, exitData, exitKeywords)
-                    | SetRoom (newRoom, rc) ->
-                        rc.Reply ()
-                        return! loop (clients, newRoom, exitData, exitKeywords)
-                    | GetExitData rc ->
-                        rc.Reply exitData
-                        return! loop (clients, room, exitData, exitKeywords)
-                    | SetExitData (newExitData, rc) ->
-                        rc.Reply ()
-                        return! loop (clients, room, newExitData, exitKeywords)
-                    | GetExitKeywords rc ->
-                        rc.Reply exitKeywords
-                        return! loop (clients, room, exitData, exitKeywords)
-                    | SetExitKeywords (newExitKeywords, rc) ->
-                        rc.Reply ()
-                        return! loop (clients, room, exitData, newExitKeywords) }
+        let rec loop (clients, room : Room, exitData : ExitMap, exitKeywords : ExitKeywordsMap) = async {
+            let! msg = inbox.Receive()
+            match msg with
+            | AddClient (client, rc) ->
+                client.CurrentRoom <- room.Id
+                rc.Reply ()
+                return! loop (clients @ [ client ], room, exitData, exitKeywords)
+
+            | ContainsClient (client, rc) ->
+                match clients |> List.tryFind (fun c -> c = client) with
+                | Some value ->
+                    rc.Reply true
+                    return! loop (clients, room, exitData, exitKeywords)
+                | None ->
+                    rc.Reply false
+                    return! loop (clients, room, exitData, exitKeywords)
+
+            | RemoveClient (client, rc) ->
+                rc.Reply ()
+                let newClients = clients |> List.filter(fun c -> not (c.Character.Data.Id = client.Character.Data.Id))
+                return! loop (newClients, room, exitData, exitKeywords)
+
+            | GetClients rc ->
+                rc.Reply clients
+                return! loop (clients, room, exitData, exitKeywords)
+
+            | GetRoom rc ->
+                rc.Reply room
+                return! loop (clients, room, exitData, exitKeywords)
+
+            | SetRoom (newRoom, rc) ->
+                rc.Reply ()
+                return! loop (clients, newRoom, exitData, exitKeywords)
+
+            | GetExitData rc ->
+                rc.Reply exitData
+                return! loop (clients, room, exitData, exitKeywords)
+
+            | SetExitData (newExitData, rc) ->
+                rc.Reply ()
+                return! loop (clients, room, newExitData, exitKeywords)
+
+            | GetExitKeywords rc ->
+                rc.Reply exitKeywords
+                return! loop (clients, room, exitData, exitKeywords)
+
+            | SetExitKeywords (newExitKeywords, rc) ->
+                rc.Reply ()
+                return! loop (clients, room, exitData, newExitKeywords)
+        }
+
         loop (List.Empty, room, exitData, exitKeywords))
 
     member rd.AddClient client = agent.PostAndReply (fun rc -> AddClient (client, rc))
@@ -109,7 +123,10 @@ let private doesRoomExist id =
 type RoomCache (isValid) as rc =
     inherit LRUCache<RoomsState> (20, TimeSpan.FromMinutes 1.0, TimeSpan.FromMinutes 5.0, isValid)
     
-    let _findByRoomId = rc.AddIndex ("RoomId", (fun room -> room.Room.Id), new LRUCache<RoomsState>.LoadItemFunc<int> (rc.LoadRoomData))
+    let _findByRoomId =
+        rc.AddIndex (
+            "RoomId", (fun room -> room.Room.Id),
+            new LRUCache<RoomsState>.LoadItemFunc<int> (rc.LoadRoomData))
 
     do
         rc.IsValid.Invoke() |> ignore
@@ -128,19 +145,29 @@ type RoomCache (isValid) as rc =
             let getExits (id) =
                 query { for i in context.Exits do
                         where (i.SourceRoomId = id)
-                        select i
-                      } |> Seq.fold (fun (state : Map<Direction, Exit>) exit -> 
-                                          let direction = EnumOfValue exit.Direction
-                                          state.Add (direction, { Description = exit.Description; DestinationRoomId = exit.DestinationRoomId;
-                                                     Direction = direction; Id = exit.Id; KeyId = exit.KeyId; SourceRoomId = exit.SourceRoomId })) Map.empty
+                        select i }
+                |> Seq.fold (fun (state : Map<Direction, Exit>) exit -> 
+                    let direction = EnumOfValue exit.Direction
+                    state.Add (
+                        direction,
+                        { Description = exit.Description;
+                          DestinationRoomId = exit.DestinationRoomId;
+                          Direction = direction;
+                          Id = exit.Id;
+                          KeyId = exit.KeyId;
+                          SourceRoomId = exit.SourceRoomId })
+                ) Map.empty
               
             let edMap = getExits id
-            let ekMap = edMap |> Map.fold(fun (state : ExitKeywordsMap) key value -> state.Add (key, getExitKeywords value.Id)) Map.empty
+            let ekMap =
+                edMap |> Map.fold(fun (state : ExitKeywordsMap) key value ->
+                    state.Add (key, getExitKeywords value.Id)) Map.empty
 
-            let room = query { for i in context.Rooms do
-                               where (i.Id = id)
-                               select ({ Description = i.Description; Id = i.Id; Title = i.Title } : Room)
-                             } |> Seq.head
+            let room = 
+                query { for i in context.Rooms do
+                        where (i.Id = id)
+                        select ({ Description = i.Description; Id = i.Id; Title = i.Title } : Room)
+                      } |> Seq.head
 
             new RoomsState (room, edMap, ekMap)
         
@@ -194,37 +221,41 @@ let lookClients (clients : List<Client>, lookClient) =
     else "\r\n"
 
 let private agent = Agent.Start (fun inbox ->
-    let rec loop (roomCache : RoomCache) =
-        async { let! msg = inbox.Receive ()
-                match msg with
-                | RoomExists (id, rc) ->
-                    rc.Reply (doesRoomExist id)
+    let rec loop (roomCache : RoomCache) = async {
+        let! msg = inbox.Receive ()
+        match msg with
+        | RoomExists (id, rc) ->
+            rc.Reply (doesRoomExist id)
+            return! loop roomCache
+        | LookRoom (client, short, roomId, rc) ->
+            let roomState = roomCache.FindByRoomId roomId
+            let clients = lookClients (roomState.Clients, client)
+            let exits = lookExits (roomState.ExitData, short)
+            rc.Reply (
+                String.Format("[{0}]  {1}\r\n {2}\r\n\r\n Exits: {3}\r\n{4}",
+                    roomState.Room.Id, roomState.Room.Title, roomState.Room.Description, exits, clients))
+            return! loop (roomCache)
+        | AddToRoom (client, roomId, rc) ->
+            let character = client.Character
+            let room = roomCache.FindByRoomId roomId
+            if client.CurrentRoom = roomId then
+                if not (room.ContainsClient client) then
+                    room.AddClient client
+                    rc.Reply ()
                     return! loop roomCache
-                | LookRoom (client, short, roomId, rc) ->
-                    let roomState = roomCache.FindByRoomId roomId
-                    let clients = lookClients (roomState.Clients, client)
-                    let exits = lookExits (roomState.ExitData, short)
-                    rc.Reply (String.Format("[{0}]  {1}\r\n {2}\r\n\r\n Exits: {3}\r\n{4}", roomState.Room.Id, roomState.Room.Title, roomState.Room.Description, exits, clients))
-                    return! loop (roomCache)
-                | AddToRoom (client, roomId, rc) ->
-                    let character = client.Character
-                    let room = roomCache.FindByRoomId roomId
-                    if client.CurrentRoom = roomId then
-                        if not (room.ContainsClient client) then
-                            room.AddClient client
-                            rc.Reply ()
-                            return! loop roomCache
-                    else
-                        let curRoom = roomCache.FindByRoomId client.CurrentRoom
-                        curRoom.RemoveClient client
-                        room.AddClient client
-                        rc.Reply ()
-                        return! loop roomCache
-                | Exit ->
-                    return ()
-                | GetRoom (id, rc) ->
-                    rc.Reply (roomCache.FindByRoomId id)
-                    return! loop roomCache }
+            else
+                let curRoom = roomCache.FindByRoomId client.CurrentRoom
+                curRoom.RemoveClient client
+                room.AddClient client
+                rc.Reply ()
+                return! loop roomCache
+        | Exit ->
+            return ()
+        | GetRoom (id, rc) ->
+            rc.Reply (roomCache.FindByRoomId id)
+            return! loop roomCache 
+    }
+
     loop (new RoomCache (new LRUCache<RoomsState>.IsCacheValid (isDataValid))))
 
 let checkRoom id = agent.PostAndReply (fun rc -> RoomExists (id, rc))
