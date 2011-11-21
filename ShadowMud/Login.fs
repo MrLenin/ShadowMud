@@ -392,7 +392,7 @@ let private updateInput loginMap =
         state.Add(loginInfo, updatedQueue)
     ) loginMap
 
-let retrieveAuthenticated loginMap =
+let private retrieveAuthenticated loginMap =
     loginMap
     |> Map.fold (fun (result, ret) key value ->
         let result : Map<string, Guid * StringQueue> = result
