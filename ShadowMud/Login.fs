@@ -317,27 +317,31 @@ let private handleCreateAttributes (attributeState, input, loginInfo) =
             let message = chooseAttributeMessage attrTable
             { loginInfo with State = CreateAttributes (ChooseAttribute createData); OutputMessage = Some message }
 
+let private handleTestName (input, loginInfo) =
+    if Characters.checkCharacter input then
+        let message = "If you are who you say you are, you should know the\r\npassword: "
+        { loginInfo with State = TestPassword input; OutputMessage = Some message }
+    else
+        let message = String.Format("Is that so, you say your name is {0}?.\r\n", input)
+        { loginInfo with State =  CreateData (VerifyName input); OutputMessage = Some message }
+
+let private handleTestPassword (name, input, loginInfo) =
+    if Characters.checkPassword (name, input) then
+        let message = String.Format("Oh, why didn't you say so sooner. Welcome, {0}.\r\n", name)
+        { loginInfo with State = Authenticated name; OutputMessage = Some message }
+    else
+        let message = "I don't think so buddy, who are you really?\r\n"
+        { loginInfo with State = TestName; OutputMessage = Some message }
+
 let private handleLoginState (loginInfo : LoginInfo, input : string) =
     match loginInfo.State with
     | Authenticated name -> loginInfo
     | CreateAttributes attributeState -> handleCreateAttributes(attributeState, input, loginInfo)
     | CreateData dataState -> handleCreateData(dataState, input, loginInfo)
-    | TestName ->
-        if Characters.checkCharacter input then
-            let message = "If you are who you say you are, you should know the\r\npassword: "
-            { loginInfo with State = TestPassword input; OutputMessage = Some message }
-        else
-            let message = String.Format("Is that so, you say your name is {0}?.\r\n", input)
-            { loginInfo with State =  CreateData (VerifyName input); OutputMessage = Some message }
-    | TestPassword name ->
-        if Characters.checkPassword (name, input) then
-            let message = String.Format("Oh, why didn't you say so sooner. Welcome, {0}.\r\n", name)
-            { loginInfo with State = Authenticated name; OutputMessage = Some message }
-        else
-            let message = "I don't think so buddy, who are you really?\r\n"
-            { loginInfo with State = TestName; OutputMessage = Some message }
+    | TestName -> handleTestName (input, loginInfo)
+    | TestPassword name -> handleTestPassword (name, input, loginInfo)
 
-let private processLogins loginMap =
+let private handleLogins loginMap =
     let needHandling, noHandling =
         loginMap |> Map.partition (fun key (value : StringQueue) ->
             not (value.IsEmpty) )
@@ -364,19 +368,19 @@ let private processLogins loginMap =
             state.Add (loginInfo, newQueue)
     ) Map.empty
 
-let private updateLogins loginMap =
-    let newlogins = Server.RetrieveLogins ()
-    let updatedLogins =
-        newlogins
-        |> Map.fold (fun (state : Map<LoginInfo, StringQueue>) sessionId ipAddress ->
-            let message = "What is your name? "
-            state.Add ( { newLoginInfo with
-                            SessionId = sessionId;
-                            IpAddress = ipAddress
-                            OutputMessage = Some message
-                        }, StringQueue.Empty ())
-        ) loginMap
-    let sessions = updatedLogins |> Map.fold (fun state key value -> key.SessionId :: state) List.empty
+let private retrieveLogins loginMap =
+    Server.RetrieveLogins ()
+    |> Map.fold (fun (state : Map<LoginInfo, StringQueue>) sessionId ipAddress ->
+        state.Add (
+            { newLoginInfo with
+                SessionId = sessionId
+                IpAddress = ipAddress
+                OutputMessage = Some "What is your name? "
+            }, StringQueue.Empty ())
+    ) loginMap
+
+let private updateInput loginMap =
+    let sessions = loginMap |> Map.fold (fun state key value -> key.SessionId :: state) List.empty
     Server.RetrieveInput sessions
     |> Map.fold (fun (state : Map<LoginInfo, StringQueue>) key inputList ->
         let loginInfo, queue =
@@ -386,7 +390,17 @@ let private updateLogins loginMap =
             inputList |> List.fold (fun (state : StringQueue) input ->
                 state.Enqueue input) queue
         state.Add(loginInfo, updatedQueue)
-    ) updatedLogins
+    ) loginMap
+
+let retrieveAuthenticated loginMap =
+    loginMap
+    |> Map.fold (fun (result, ret) key value ->
+        let result : Map<string, Guid * StringQueue> = result
+        let ret : Map<LoginInfo, StringQueue> = ret
+        match key.State with
+        | Authenticated name -> (result.Add (name, (key.SessionId, value)), ret)
+        | _ -> (result, ret.Add (key, value))
+    ) (Map.empty, Map.empty)
 
 type private LoginCommands =
     | UpdateLogins of AsyncReplyChannel<unit>
@@ -399,44 +413,36 @@ let private agent = Agent.Start (fun inbox ->
         let! msg = inbox.Receive ()
         match msg with
         | UpdateLogins rc ->
-            let result = updateLogins loginMap
+            let loginMap = updateInput (retrieveLogins loginMap)
             rc.Reply ()
-            return! loop result
+            return! loop loginMap
 
         | ProcessLogins ->
-            let test = processLogins loginMap
-            return! loop test
+            return! loop (handleLogins loginMap)
 
         | IsLoginsEmpty rc ->
             rc.Reply loginMap.IsEmpty
             return! loop loginMap
 
         | RetrieveAuthenticated rc ->
-            let result, loginMap =
-                loginMap
-                |> Map.fold (fun (result, ret) key value ->
-                    let result : Map<string, Guid * StringQueue> = result
-                    let ret : Map<LoginInfo, StringQueue> = ret
-                    match key.State with
-                    | Authenticated name -> (result.Add (name, (key.SessionId, value)), ret)
-                    | _ -> (result, ret.Add (key, value))
-                    ) (Map.empty, Map.empty)
-            rc.Reply result
+            let authenticated, loginMap =
+                retrieveAuthenticated loginMap
+            rc.Reply authenticated
             return! loop loginMap
         }
     loop Map.empty )
 
-let private IsLoginsEmpty () = agent.PostAndReply (fun rc -> IsLoginsEmpty rc)
-let private UpdateLogins () = agent.PostAndReply (fun rc -> UpdateLogins rc)
-let private ProcessLogins () = agent.Post (ProcessLogins)
+let private isLoginsEmpty () = agent.PostAndReply (fun rc -> IsLoginsEmpty rc)
+let private updateLogins () = agent.PostAndReply (fun rc -> UpdateLogins rc)
+let private processLogins () = agent.Post ProcessLogins
 
 let RetrieveAuthenticated () = agent.PostAndReply (fun rc -> RetrieveAuthenticated rc)
 
 let rec private loginLoop () = async {
-    UpdateLogins ()
-    if IsLoginsEmpty () then
+    updateLogins ()
+    if isLoginsEmpty () then
         do! Async.Sleep 1
-    else ProcessLogins ()
+    else processLogins ()
     return! loginLoop ()
     }
 
