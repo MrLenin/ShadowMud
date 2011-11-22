@@ -2,6 +2,7 @@
 
 open System
 open System.Data.Linq
+open System.Linq
 open System.Text
 
 open Microsoft.FSharp.Core.LanguagePrimitives
@@ -12,22 +13,22 @@ open ShadowMud.Cache
 type private Client = Characters.Client
 
 type Room =
-    {   Description : string;
-        Id : int;
+    {   Description : string
+        Id : int
         Title : string
     }
 
 type Exit =
-    {   Description : string;
-        DestinationRoomId : int;
-        Direction : Direction;
-        Id : int;
-        KeyId : Nullable<int>;
+    {   Description : string
+        DestinationRoomId : int
+        Direction : Direction
+        Id : int
+        KeyId : int option
         SourceRoomId : int
     }
 
 type ExitKeyword =
-    {   Keyword : string;
+    {   Keyword : string
         ExitId : int
     }
 
@@ -113,21 +114,57 @@ type RoomsState (room : Room, exitData : ExitMap, exitKeywords : ExitKeywordsMap
 
 let private edmConnectionString = "metadata=res://*/ShadowMud.csdl|res://*/ShadowMud.ssdl|res://*/ShadowMud.msl;provider=System.Data.SqlServerCe.4.0;provider connection string='data source=|DataDirectory|..\..\..\ShadowMudlib\EntityModel\ShadowMud.sdf;password=q0p1w9o2e8;persist security info=True;'"
 let private context = new EntityModel.Entities(edmConnectionString)
+context.Connection.Open ()
 
 let private doesRoomExist id =
-    not (query { for i in context.Rooms do
-                 where (i.Id = id)
-                 select i
-               } |> Seq.isEmpty)
+    query { for i in context.Rooms do
+            select i.Id
+            contains id }
 
-type RoomCache (isValid) as rc =
+let getRoomEntities id =
+    try query {
+        for i in context.Rooms.Include("Entrances.Keywords.Exit").Include("Exits.Keywords.Exit")
+            .Include("Exits.DestinationRoom").Include("Zone") do
+            where (i.Id = id)
+            exactlyOne }
+    with
+    | exn ->
+        Console.WriteLine "Error - Character not found"
+        reraise ()
+
+let private buildExitMap (exitEntityList : EntityModel.Exit list) =
+    exitEntityList
+    |> List.fold (fun (state : Map<Direction, Exit>) exit ->
+        state.Add(EnumOfValue exit.Direction,
+            {   Description = exit.Description
+                DestinationRoomId = exit.DestinationRoomId
+                Direction = EnumOfValue exit.Direction
+                Id = exit.Id
+                KeyId = NullableToOption exit.KeyId
+                SourceRoomId = exit.SourceRoomId })
+    ) Map.empty
+
+let private buildKeywordMap (exitEntityList : EntityModel.Exit list) =
+    exitEntityList
+    |> List.fold(fun (state : ExitKeywordsMap) exit ->
+        let keywordSeq =
+            exit.Keywords.ToArray()
+            |> Seq.ofArray
+            |> Seq.map (fun keyword -> { Keyword = keyword.Keyword; ExitId = keyword.ExitId })
+        state.Add (EnumOfValue exit.Direction, keywordSeq)
+    ) Map.empty
+
+let private getRoomRecords (roomEntity : EntityModel.Room) =
+    let exitEntityList = roomEntity.Exits.ToArray() |> List.ofArray
+    ({ Description = roomEntity.Description; Id = roomEntity.Id; Title = roomEntity.Title },
+        buildExitMap exitEntityList, buildKeywordMap exitEntityList)
+    
+type RoomCache(isValid) as rc =
     inherit LRUCache<RoomsState> (20, TimeSpan.FromMinutes 1.0, TimeSpan.FromMinutes 5.0, isValid)
     
     let _findByRoomId =
-        rc.AddIndex (
-            "RoomId", (fun room -> room.Room.Id),
+        rc.AddIndex ("RoomId", (fun room -> room.Room.Id),
             new LRUCache<RoomsState>.LoadItemFunc<int> (rc.LoadRoomData))
-
     do
         rc.IsValid.Invoke() |> ignore
 
@@ -135,47 +172,8 @@ type RoomCache (isValid) as rc =
         _findByRoomId.[roomId]
         
     member rc.LoadRoomData id =
-        try
-            let getExitKeywords (exitId) =
-                query { for i in context.ExitKeywords do
-                        where (i.ExitId = exitId)
-                        select { Keyword = i.Keyword; ExitId = i.ExitId }
-                      }
-
-            let getExits (id) =
-                query { for i in context.Exits do
-                        where (i.SourceRoomId = id)
-                        select i }
-                |> Seq.fold (fun (state : Map<Direction, Exit>) exit -> 
-                    let direction = EnumOfValue exit.Direction
-                    state.Add (
-                        direction,
-                        { Description = exit.Description;
-                          DestinationRoomId = exit.DestinationRoomId;
-                          Direction = direction;
-                          Id = exit.Id;
-                          KeyId = exit.KeyId;
-                          SourceRoomId = exit.SourceRoomId })
-                ) Map.empty
-              
-            let edMap = getExits id
-            let ekMap =
-                edMap |> Map.fold(fun (state : ExitKeywordsMap) key value ->
-                    state.Add (key, getExitKeywords value.Id)) Map.empty
-
-            let room = 
-                query { for i in context.Rooms do
-                        where (i.Id = id)
-                        select ({ Description = i.Description; Id = i.Id; Title = i.Title } : Room)
-                      } |> Seq.head
-
-            new RoomsState (room, edMap, ekMap)
+        new RoomsState (getRoomRecords (getRoomEntities id))
         
-        with
-            | exn ->
-                Console.WriteLine "Error - Character not found"
-                reraise ()
-
 let mutable private tableVersion = 0
 
 let private isDataValid () =

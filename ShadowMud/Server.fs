@@ -21,8 +21,7 @@ type private System.Net.Sockets.TcpListener with
 
 type private System.Net.Sockets.Socket with
     static member IsConnected (socket : Socket) =
-        try
-          not (socket.Poll (1, SelectMode.SelectRead) && socket.Available = 0)
+        try not (socket.Poll (1, SelectMode.SelectRead) && socket.Available = 0)
         with _ -> false
 
 type private ClientTableCommands =

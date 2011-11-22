@@ -1,4 +1,4 @@
-﻿namespace ShadowMud.Data
+﻿module ShadowMud.Data
 
 open System
 open System.Data.Entity
@@ -71,6 +71,9 @@ type StringQueue = Fifo<string>
 [<Generate>]
 type ShadowMudEdmx = EdmxFile< @"..\ShadowMudlib\EntityModel\ShadowMud.edmx">
 type EntityModel = ShadowMudEdmx.Model
+
+let NullableToOption (n : System.Nullable<_>) = 
+   if n.HasValue then Some n.Value else None
 
 // Live database-based - interface closer to Linq-to-SQL, generated types are strictly controlled by the underlying database relational model/naming scheme
 //[<Generate>]

@@ -19,8 +19,8 @@ using System.Runtime.Serialization;
 #region EDM Relationship Metadata
 
 [assembly: EdmRelationshipAttribute("Model", "FK_ExitKeyword_Exit", "Exit", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Exit), "ExitKeyword", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.ExitKeyword), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_Attribute_Character", "Character", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "Attribute", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Attribute), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_Finances_Character", "Character", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "Finance", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Finance), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_Attribute_Character", "Character", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "Attribute", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Attributes), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_Finances_Character", "Character", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "Finance", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Finances), true)]
 [assembly: EdmRelationshipAttribute("Model", "FK_ItemKeyword_Item", "Item", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Item), "ItemKeyword", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.ItemKeyword), true)]
 [assembly: EdmRelationshipAttribute("Model", "FK_ItemWearLocation_Item", "Item", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Item), "ItemWearLocation", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.ItemWearLocation), true)]
 [assembly: EdmRelationshipAttribute("Model", "FK_Exit_Room_Destination", "Room", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Room), "Exit", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Exit), true)]
@@ -114,18 +114,18 @@ namespace ShadowMud.EntityModel
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<Attribute> Attributes
+        public ObjectSet<Attributes> Attributes
         {
             get
             {
                 if ((_Attributes == null))
                 {
-                    _Attributes = base.CreateObjectSet<Attribute>("Attributes");
+                    _Attributes = base.CreateObjectSet<Attributes>("Attributes");
                 }
                 return _Attributes;
             }
         }
-        private ObjectSet<Attribute> _Attributes;
+        private ObjectSet<Attributes> _Attributes;
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -146,18 +146,18 @@ namespace ShadowMud.EntityModel
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<Finance> Finances
+        public ObjectSet<Finances> Finances
         {
             get
             {
                 if ((_Finances == null))
                 {
-                    _Finances = base.CreateObjectSet<Finance>("Finances");
+                    _Finances = base.CreateObjectSet<Finances>("Finances");
                 }
                 return _Finances;
             }
         }
-        private ObjectSet<Finance> _Finances;
+        private ObjectSet<Finances> _Finances;
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -293,9 +293,9 @@ namespace ShadowMud.EntityModel
         /// <summary>
         /// Deprecated Method for adding a new object to the Attributes EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
-        public void AddToAttributes(Attribute attribute)
+        public void AddToAttributes(Attributes attributes)
         {
-            base.AddObject("Attributes", attribute);
+            base.AddObject("Attributes", attributes);
         }
     
         /// <summary>
@@ -309,9 +309,9 @@ namespace ShadowMud.EntityModel
         /// <summary>
         /// Deprecated Method for adding a new object to the Finances EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
-        public void AddToFinances(Finance finance)
+        public void AddToFinances(Finances finances)
         {
-            base.AddObject("Finances", finance);
+            base.AddObject("Finances", finances);
         }
     
         /// <summary>
@@ -381,15 +381,15 @@ namespace ShadowMud.EntityModel
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="Model", Name="Attribute")]
+    [EdmEntityTypeAttribute(NamespaceName="Model", Name="Attributes")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class Attribute : EntityObject
+    public partial class Attributes : EntityObject
     {
         #region Factory Method
     
         /// <summary>
-        /// Create a new Attribute object.
+        /// Create a new Attributes object.
         /// </summary>
         /// <param name="agility">Initial value of the Agility property.</param>
         /// <param name="body">Initial value of the Body property.</param>
@@ -399,28 +399,24 @@ namespace ShadowMud.EntityModel
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="intuition">Initial value of the Intuition property.</param>
         /// <param name="logic">Initial value of the Logic property.</param>
-        /// <param name="magic">Initial value of the Magic property.</param>
         /// <param name="reaction">Initial value of the Reaction property.</param>
-        /// <param name="resonance">Initial value of the Resonance property.</param>
         /// <param name="strength">Initial value of the Strength property.</param>
         /// <param name="willpower">Initial value of the Willpower property.</param>
-        public static Attribute CreateAttribute(global::System.Int32 agility, global::System.Int32 body, global::System.Int32 charisma, global::System.Int32 edge, global::System.Int32 essence, global::System.Int32 id, global::System.Int32 intuition, global::System.Int32 logic, global::System.Int32 magic, global::System.Int32 reaction, global::System.Int32 resonance, global::System.Int32 strength, global::System.Int32 willpower)
+        public static Attributes CreateAttributes(global::System.Int32 agility, global::System.Int32 body, global::System.Int32 charisma, global::System.Int32 edge, global::System.Int32 essence, global::System.Int32 id, global::System.Int32 intuition, global::System.Int32 logic, global::System.Int32 reaction, global::System.Int32 strength, global::System.Int32 willpower)
         {
-            Attribute attribute = new Attribute();
-            attribute.Agility = agility;
-            attribute.Body = body;
-            attribute.Charisma = charisma;
-            attribute.Edge = edge;
-            attribute.Essence = essence;
-            attribute.Id = id;
-            attribute.Intuition = intuition;
-            attribute.Logic = logic;
-            attribute.Magic = magic;
-            attribute.Reaction = reaction;
-            attribute.Resonance = resonance;
-            attribute.Strength = strength;
-            attribute.Willpower = willpower;
-            return attribute;
+            Attributes attributes = new Attributes();
+            attributes.Agility = agility;
+            attributes.Body = body;
+            attributes.Charisma = charisma;
+            attributes.Edge = edge;
+            attributes.Essence = essence;
+            attributes.Id = id;
+            attributes.Intuition = intuition;
+            attributes.Logic = logic;
+            attributes.Reaction = reaction;
+            attributes.Strength = strength;
+            attributes.Willpower = willpower;
+            return attributes;
         }
 
         #endregion
@@ -624,9 +620,9 @@ namespace ShadowMud.EntityModel
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public global::System.Int32 Magic
+        public Nullable<global::System.Int32> Magic
         {
             get
             {
@@ -641,8 +637,8 @@ namespace ShadowMud.EntityModel
                 OnMagicChanged();
             }
         }
-        private global::System.Int32 _Magic;
-        partial void OnMagicChanging(global::System.Int32 value);
+        private Nullable<global::System.Int32> _Magic;
+        partial void OnMagicChanging(Nullable<global::System.Int32> value);
         partial void OnMagicChanged();
     
         /// <summary>
@@ -672,9 +668,9 @@ namespace ShadowMud.EntityModel
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public global::System.Int32 Resonance
+        public Nullable<global::System.Int32> Resonance
         {
             get
             {
@@ -689,8 +685,8 @@ namespace ShadowMud.EntityModel
                 OnResonanceChanged();
             }
         }
-        private global::System.Int32 _Resonance;
-        partial void OnResonanceChanging(global::System.Int32 value);
+        private Nullable<global::System.Int32> _Resonance;
+        partial void OnResonanceChanging(Nullable<global::System.Int32> value);
         partial void OnResonanceChanged();
     
         /// <summary>
@@ -1082,15 +1078,15 @@ namespace ShadowMud.EntityModel
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("Model", "FK_Attribute_Character", "Attribute")]
-        public Attribute Attribute
+        public Attributes Attributes
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Attribute>("Model.FK_Attribute_Character", "Attribute").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Attributes>("Model.FK_Attribute_Character", "Attribute").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Attribute>("Model.FK_Attribute_Character", "Attribute").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Attributes>("Model.FK_Attribute_Character", "Attribute").Value = value;
             }
         }
         /// <summary>
@@ -1098,17 +1094,17 @@ namespace ShadowMud.EntityModel
         /// </summary>
         [BrowsableAttribute(false)]
         [DataMemberAttribute()]
-        public EntityReference<Attribute> AttributeReference
+        public EntityReference<Attributes> AttributesReference
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Attribute>("Model.FK_Attribute_Character", "Attribute");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Attributes>("Model.FK_Attribute_Character", "Attribute");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Attribute>("Model.FK_Attribute_Character", "Attribute", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Attributes>("Model.FK_Attribute_Character", "Attribute", value);
                 }
             }
         }
@@ -1120,17 +1116,17 @@ namespace ShadowMud.EntityModel
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("Model", "FK_Finances_Character", "Finance")]
-        public EntityCollection<Finance> Finances
+        public EntityCollection<Finances> Finances
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Finance>("Model.FK_Finances_Character", "Finance");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Finances>("Model.FK_Finances_Character", "Finance");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Finance>("Model.FK_Finances_Character", "Finance", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Finances>("Model.FK_Finances_Character", "Finance", value);
                 }
             }
         }
@@ -1366,7 +1362,7 @@ namespace ShadowMud.EntityModel
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("Model", "FK_ExitKeyword_Exit", "ExitKeyword")]
-        public EntityCollection<ExitKeyword> ExitKeywords
+        public EntityCollection<ExitKeyword> Keywords
         {
             get
             {
@@ -1388,7 +1384,7 @@ namespace ShadowMud.EntityModel
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("Model", "FK_Exit_Room_Destination", "Room")]
-        public Room Room
+        public Room DestinationRoom
         {
             get
             {
@@ -1404,7 +1400,7 @@ namespace ShadowMud.EntityModel
         /// </summary>
         [BrowsableAttribute(false)]
         [DataMemberAttribute()]
-        public EntityReference<Room> RoomReference
+        public EntityReference<Room> DestinationRoomReference
         {
             get
             {
@@ -1426,7 +1422,7 @@ namespace ShadowMud.EntityModel
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("Model", "FK_Exit_Room_Source", "Room")]
-        public Room Room1
+        public Room SourceRoom
         {
             get
             {
@@ -1442,7 +1438,7 @@ namespace ShadowMud.EntityModel
         /// </summary>
         [BrowsableAttribute(false)]
         [DataMemberAttribute()]
-        public EntityReference<Room> Room1Reference
+        public EntityReference<Room> SourceRoomReference
         {
             get
             {
@@ -1611,28 +1607,28 @@ namespace ShadowMud.EntityModel
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="Model", Name="Finance")]
+    [EdmEntityTypeAttribute(NamespaceName="Model", Name="Finances")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class Finance : EntityObject
+    public partial class Finances : EntityObject
     {
         #region Factory Method
     
         /// <summary>
-        /// Create a new Finance object.
+        /// Create a new Finances object.
         /// </summary>
         /// <param name="amount">Initial value of the Amount property.</param>
         /// <param name="currency">Initial value of the Currency property.</param>
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="characterId">Initial value of the CharacterId property.</param>
-        public static Finance CreateFinance(global::System.Int32 amount, global::System.Int32 currency, global::System.Int32 id, global::System.Int32 characterId)
+        public static Finances CreateFinances(global::System.Int32 amount, global::System.Int32 currency, global::System.Int32 id, global::System.Int32 characterId)
         {
-            Finance finance = new Finance();
-            finance.Amount = amount;
-            finance.Currency = currency;
-            finance.Id = id;
-            finance.CharacterId = characterId;
-            return finance;
+            Finances finances = new Finances();
+            finances.Amount = amount;
+            finances.Currency = currency;
+            finances.Id = id;
+            finances.CharacterId = characterId;
+            return finances;
         }
 
         #endregion

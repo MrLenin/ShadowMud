@@ -11,19 +11,19 @@ open ShadowMud.Data
 
 type private BCrypt = Crypt.BCrypt
 
-type Priority =
+type private Priority =
     | Attributes
     | Skills
     | Resources
 
-type PriorityLevel =
+type private PriorityLevel =
     | PriorityA
     | PriorityB
     | PriorityC
     | PriorityD
     | PriorityE
 
-type Attribute =
+type private Attribute =
     | Agility
     | Body
     | Reaction
@@ -36,44 +36,44 @@ type Attribute =
     | Magic
     | Resonance
 
-type PrioritiesMap = Map<PriorityLevel, Priority option>
-type AttributesMap = Map<Attribute, int>
+type private PrioritiesMap = Map<PriorityLevel, Priority option>
+type private AttributesMap = Map<Attribute, int>
 
-let PriorityList = [ PriorityA; PriorityB; PriorityC; PriorityD; PriorityE ]
-let AttributesList = [ Agility; Body; Reaction; Strength; Charisma; Intuition; Logic; Willpower; Edge ]
+let private PriorityList = [ PriorityA; PriorityB; PriorityC; PriorityD; PriorityE ]
+let private AttributesList = [ Agility; Body; Reaction; Strength; Charisma; Intuition; Logic; Willpower; Edge ]
 
-let AttributesPriorityMap =
+let private AttributesPriorityMap =
     [ PriorityA, 30; PriorityB, 27; PriorityC, 24; PriorityD, 21; PriorityE, 18 ]
     |> Map.ofList
 
-let SkillsPriorityMap =
+let private SkillsPriorityMap =
     [ PriorityA, 50; PriorityB, 40; PriorityC, 34; PriorityD, 30; PriorityE, 27 ]
     |> Map.ofList
 
-let ResourcesPriorityMap =
+let private ResourcesPriorityMap =
     [ PriorityA, 1000000; PriorityB, 400000; PriorityC, 90000; PriorityD, 20000; PriorityE, 5000 ]
     |> Map.ofList
 
-let AttributeStringMap =
+let private AttributeStringMap =
     [ Agility, "Agility"; Body, "Body"; Reaction, "Reaction"; Strength, "Strength";
       Charisma, "Charisma"; Intuition, "Intuition"; Logic, "Logic"; Willpower, "Willpower";
       Magic, "Magic"; Resonance, "Resonance"; Edge, "Edge" ]
     |> Map.ofList
 
-type PrioritiesTable =
+type private PrioritiesTable =
     {
         PrioritiesMap : PrioritiesMap;
         PriorityList : PriorityLevel list
     }
 
-type AttributesTable =
+type private AttributesTable =
     {
         AttributesMap : AttributesMap;
         Attributes : Attribute list;
         Points : int;
     }
 
-type CreateData =
+type private CreateData =
     {
         Name : string;
         Password : string;
@@ -86,7 +86,7 @@ type CreateData =
         SkillPoints : int
     }
 
-type CreateDataState =
+type private CreateDataState =
     | VerifyName of string
     | GetPassword of (string * string option)
     | GetGender of CreateData
@@ -94,18 +94,18 @@ type CreateDataState =
     | ChooseAwakened of CreateData
     | ChoosePriority of (CreateData * Priority option)
 
-type CreateAttributesState =
+type private CreateAttributesState =
     | ChooseAttribute of CreateData
     | SetAttribute of (CreateData * Attribute)
 
-type LoginState =
+type private LoginState =
     | TestName
     | TestPassword of string
     | CreateData of CreateDataState
     | CreateAttributes of CreateAttributesState
     | Authenticated of string
 
-type LoginInfo = 
+type private LoginInfo = 
     {   SessionId : Guid;
         Hostname : string;
         IpAddress : string;
@@ -113,42 +113,42 @@ type LoginInfo =
         OutputMessage : string option
     }
 
-let newAttributesMap attrList =
+let private newAttributesMap attrList =
     attrList
     |> List.fold (fun state attr ->
         let state : Map<Attribute, int> = state
         state.Add (attr, 1)
     ) Map.empty
 
-let newPrioritiesTable = { PrioritiesMap = Map.empty; PriorityList = PriorityList }
-let newAttributesTable = { AttributesMap = Map.empty; Attributes = AttributesList; Points = 0 }
-let newCreateData = { Name = String.Empty; Password = String.Empty; Gender = Gender.None; Metatype = Metatype.Human; Awakened = Awakened.Unawakened; Priorities = newPrioritiesTable; AttributesTable = newAttributesTable; Nuyen = 0; SkillPoints = 0 }
-let newLoginInfo : LoginInfo = { SessionId = Guid.NewGuid (); Hostname = String.Empty; IpAddress = String.Empty; State = TestName; OutputMessage = None }
+let private newPrioritiesTable = { PrioritiesMap = Map.empty; PriorityList = PriorityList }
+let private newAttributesTable = { AttributesMap = Map.empty; Attributes = AttributesList; Points = 0 }
+let private newCreateData = { Name = String.Empty; Password = String.Empty; Gender = Gender.None; Metatype = Metatype.Human; Awakened = Awakened.Unawakened; Priorities = newPrioritiesTable; AttributesTable = newAttributesTable; Nuyen = 0; SkillPoints = 0 }
+let private newLoginInfo : LoginInfo = { SessionId = Guid.NewGuid (); Hostname = String.Empty; IpAddress = String.Empty; State = TestName; OutputMessage = None }
 
-let addDummyPriority (table, level) =
+let private addDummyPriority (table, level) =
     let newLevels = table.PriorityList |> List.filter(fun priorityLevel -> not (priorityLevel = level))
     { PrioritiesMap = table.PrioritiesMap.Add(level, None); PriorityList = newLevels }
             
-let addPriority (table, priority) =
+let private addPriority (table, priority) =
     let level = List.min(table.PriorityList)
     let newLevels = table.PriorityList |> List.filter(fun priorityLevel -> not (priorityLevel = level))
     { PrioritiesMap = table.PrioritiesMap.Add(level, Some priority); PriorityList = newLevels }
 
-let attributePoints (attrTable, attribute) =
+let private attributePoints (attrTable, attribute) =
     attrTable.AttributesMap.[attribute]
 
-let usedPoints attrTable =
+let private usedPoints attrTable =
     attrTable.Attributes
     |> List.fold ( fun state attr ->
         state + attrTable.AttributesMap.[attr] ) 0
 
-let remainingPoints (attrTable : AttributesTable) =
+let private remainingPoints (attrTable : AttributesTable) =
     attrTable.Points - usedPoints attrTable
 
-let chooseAttributeMessage attrTable =
+let private chooseAttributeMessage attrTable =
     let choiceFormat = "\r\n\t{0}) {1} [{2}]"
-    let pointsFormat = "You recieve {0} points to spend on attributs to begin with.\r\n{1} points have been allocated so far and you have {2} points remaining."
-    let messageFormat = "{0}{1}\r\n\r\nChoose an attribute: "
+    let pointsFormat = "The priorities you have selected grant you {0} points to spend on attributes.\r\n{1} points have been allocated so far and you have {2} points remaining."
+    let messageFormat = "{0}{1}\r\n\r\nChoose an attribute or enter \"done\": "
     let pointsMsg = String.Format (pointsFormat, attrTable.Points, usedPoints attrTable, remainingPoints attrTable)
     let _, choicesMsg =
         attrTable.Attributes
@@ -158,7 +158,7 @@ let chooseAttributeMessage attrTable =
             (count, msg)) (0, String.Empty)
     String.Format(messageFormat, pointsMsg, choicesMsg)
 
-let getPriorityValue (level, state, priority) =
+let private getPriorityValue (level, state, priority) =
     let attributes, skills, resources = state
     match priority with
     | Some priority ->
@@ -168,15 +168,57 @@ let getPriorityValue (level, state, priority) =
         | Resources -> (attributes, skills, ResourcesPriorityMap.[level])
     | None -> state
 
+type private Character = Characters.Character
+
+let private generateCharacter (createData : CreateData) =
+    let attrMap = createData.AttributesTable.AttributesMap
+
+    Characters.newCharacter
+        { Character.Attributes =
+            { Characters.newAttributes with
+                Agility = attrMap.[Agility]
+                Body = attrMap.[Body]
+                Reaction = attrMap.[Reaction]
+                Strength = attrMap.[Strength]
+                Charisma = attrMap.[Charisma]
+                Intuition = attrMap.[Intuition]
+                Logic = attrMap.[Logic]
+                Willpower = attrMap.[Willpower]
+                Edge = attrMap.[Edge]
+                Resonance = None
+                Magic =
+                    match attrMap.TryFind Magic with
+                    | Some value -> Some value
+                    | None -> None }
+
+          Character.Data =
+            { Characters.newData with
+                Name = createData.Name
+                Password = createData.Password
+                Gender = createData.Gender
+                Metatype = createData.Metatype
+                Awakened = createData.Awakened }
+
+          Character.Finances =
+            Characters.currencyList
+            |> List.fold (fun (state : Map<Currency, int>) currency ->
+                match currency with
+                | Currency.Nuyen -> state.Add (currency, createData.Nuyen)
+                | _ -> state.Add (currency, 0)
+            ) Map.empty
+
+          Character.State = Characters.newState
+        }
+
 let private handleCreateData (dataState, input, loginInfo) =
     let input : string = input
 
     match dataState with
     | VerifyName name ->
         if input.ToLower () = "yes" || input.ToLower () = "y" then
-            { loginInfo with LoginInfo.State = CreateData (GetPassword (name, None)); OutputMessage = Some "What do you want your passphrase to be?.\r\n" }
+            { loginInfo with State = CreateData (GetPassword (name, None)); OutputMessage = Some "What do you want your passphrase to be? " }
         else
-            { loginInfo with State = TestName; OutputMessage = Some "So who are you then?\r\n" }
+            { loginInfo with State = TestName; OutputMessage = Some "So who are you then? " }
 
     | GetPassword (name, fstPassword) ->
         match fstPassword with
@@ -186,10 +228,10 @@ let private handleCreateData (dataState, input, loginInfo) =
                 let message = "Passphrase verified.\r\nWhat is your gender?\r\n\t0) Asexual\r\n\t1) Male\r\n\t2) Female\r\n"
                 { loginInfo with State = CreateData (GetGender createData); OutputMessage = Some message }
             else
-                let message = "That doesn't match what you gave me, are you trying to pull something? Let's try that again:\r\n"
+                let message = "That doesn't match what you gave me, are you trying to pull something? Let's try that again. "
                 { loginInfo with State = CreateData (GetPassword (name, None)); OutputMessage = Some message }
         | None ->
-            let message = "Write it down a second time for your records:\r\n"
+            let message = "Write it down a second time for your records. "
             { loginInfo with State = CreateData (GetPassword (name, Some input)); OutputMessage = Some message }
 
     | GetGender createData ->
@@ -209,7 +251,7 @@ let private handleCreateData (dataState, input, loginInfo) =
         if priorities = newPrioritiesTable then
             { loginInfo with State = CreateData (ChooseMetatype createData); OutputMessage = Some "That's not a valid option, try again.\r\n" }
         else
-            let createData = { newCreateData with Metatype = metatype; Priorities = priorities }
+            let createData = { createData with Metatype = metatype; Priorities = priorities }
             let message = "What best describes your magical abilities?\r\n\t0) Unawakened\r\n\t1) Full Magician\r\n" +
                           "\t2) Adept\r\n\t3) Aspected Magician\r\n"
             { loginInfo with State = CreateData (ChooseAwakened createData); OutputMessage = Some message }
@@ -294,20 +336,33 @@ let private handleCreateAttributes (attributeState, input, loginInfo) =
 
     match attributeState with
     | ChooseAttribute createData ->
-        let selection = int (input)
-        let attrList = createData.AttributesTable.Attributes
-        if selection > 0 && selection <= attrList.Length then
-            let attribute = attrList.[selection - 1]
-            let setFormat = "{0} is currently set to {1}, what do you wish to set it to? "
-            let message = String.Format (setFormat, AttributeStringMap.[attribute], attributePoints (createData.AttributesTable, attribute))
-            { loginInfo with LoginInfo.State = CreateAttributes (SetAttribute (createData, attribute)); OutputMessage = Some message }
+        if not(input = "done" || input = "d") then
+            try
+            let selection = int (input)
+            let attrList = createData.AttributesTable.Attributes
+            if selection > 0 && selection <= attrList.Length then
+                let attribute = attrList.[selection - 1]
+                let setFormat = "{0} is currently set to {1}, what do you wish to set it to? "
+                let message = String.Format (setFormat, AttributeStringMap.[attribute], attributePoints (createData.AttributesTable, attribute))
+                { loginInfo with State = CreateAttributes (SetAttribute (createData, attribute)); OutputMessage = Some message }
+            else
+                let message = chooseAttributeMessage createData.AttributesTable
+                { loginInfo with State = CreateAttributes (ChooseAttribute createData); OutputMessage = Some message }
+            with
+            | exn -> { loginInfo with OutputMessage = Some "That's not a valid option, try again. " }
+        else if remainingPoints createData.AttributesTable = 0 then
+                generateCharacter createData
+                let message = "Welcome to ShadowMud, " + createData.Name + "!"
+                { loginInfo with State = Authenticated createData.Name; OutputMessage = Some message }
         else
-            let message = chooseAttributeMessage createData.AttributesTable
-            { loginInfo with LoginInfo.State = CreateAttributes (ChooseAttribute createData); OutputMessage = Some message }
-        
+            { loginInfo with OutputMessage = Some "You have not used all of your points yet. " }
+            
     | SetAttribute (createData, attribute) ->
+        try
         let value = int (input)
-        if value > remainingPoints createData.AttributesTable then
+        let newUsed = value + (usedPoints createData.AttributesTable - 1)
+        let total = createData.AttributesTable.Points
+        if newUsed > total then
             { loginInfo with OutputMessage = Some "That exceeds your remaining points. " }
         else if value < 1 then
             { loginInfo with OutputMessage = Some "You must enter a value of at least one. " }
@@ -316,13 +371,15 @@ let private handleCreateAttributes (attributeState, input, loginInfo) =
             let createData = { createData with AttributesTable = attrTable }
             let message = chooseAttributeMessage attrTable
             { loginInfo with State = CreateAttributes (ChooseAttribute createData); OutputMessage = Some message }
+        with
+        | exn -> { loginInfo with OutputMessage = Some "That's not a valid option, try again. " }
 
 let private handleTestName (input, loginInfo) =
     if Characters.checkCharacter input then
-        let message = "If you are who you say you are, you should know the\r\npassword: "
+        let message = "We'll see about that, what is the password? "
         { loginInfo with State = TestPassword input; OutputMessage = Some message }
     else
-        let message = String.Format("Is that so, you say your name is {0}?.\r\n", input)
+        let message = String.Format("Is that so, you say your name is {0}? ", input)
         { loginInfo with State =  CreateData (VerifyName input); OutputMessage = Some message }
 
 let private handleTestPassword (name, input, loginInfo) =
@@ -330,7 +387,7 @@ let private handleTestPassword (name, input, loginInfo) =
         let message = String.Format("Oh, why didn't you say so sooner. Welcome, {0}.\r\n", name)
         { loginInfo with State = Authenticated name; OutputMessage = Some message }
     else
-        let message = "I don't think so buddy, who are you really?\r\n"
+        let message = "Nope! Now tell me who you are before I waste you. "
         { loginInfo with State = TestName; OutputMessage = Some message }
 
 let private handleLoginState (loginInfo : LoginInfo, input : string) =

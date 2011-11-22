@@ -4,10 +4,10 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="90682a25aded4e2a9506de403f4fe45b" Name="Character Diagram" ZoomLevel="82" >
-        <EntityTypeShape EntityType="Model.Attribute" Width="1.5" PointX="5.375" PointY="0.75" />
+      <Diagram DiagramId="90682a25aded4e2a9506de403f4fe45b" Name="Character Diagram" ZoomLevel="94" >
+        <EntityTypeShape EntityType="Model.Attributes" Width="1.5" PointX="5.375" PointY="0.75" />
         <EntityTypeShape EntityType="Model.Character" Width="1.5" PointX="7.625" PointY="0.875" />
-        <EntityTypeShape EntityType="Model.Finance" Width="1.5" PointX="7.625" PointY="5.125" />
+        <EntityTypeShape EntityType="Model.Finances" Width="1.5" PointX="7.625" PointY="5.125" />
         <AssociationConnector Association="Model.FK_Attribute_Character" />
         <AssociationConnector Association="Model.FK_Finances_Character" />
         <EntityTypeShape EntityType="Model.State" Width="1.5" PointX="10.125" PointY="1.625" />

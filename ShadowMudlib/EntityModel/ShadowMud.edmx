@@ -71,9 +71,9 @@
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Intuition" Type="int" Nullable="false" />
           <Property Name="Logic" Type="int" Nullable="false" />
-          <Property Name="Magic" Type="int" Nullable="false" />
+          <Property Name="Magic" Type="int" />
           <Property Name="Reaction" Type="int" Nullable="false" />
-          <Property Name="Resonance" Type="int" Nullable="false" />
+          <Property Name="Resonance" Type="int" />
           <Property Name="Strength" Type="int" Nullable="false" />
           <Property Name="Willpower" Type="int" Nullable="false" />
         </EntityType>
@@ -312,9 +312,9 @@
             <End Role="Exit" EntitySet="Exits" />
             <End Role="ExitKeyword" EntitySet="ExitKeywords" />
           </AssociationSet>
-          <EntitySet Name="Attributes" EntityType="Model.Attribute" />
+          <EntitySet Name="Attributes" EntityType="Model.Attributes" />
           <EntitySet Name="Characters" EntityType="Model.Character" />
-          <EntitySet Name="Finances" EntityType="Model.Finance" />
+          <EntitySet Name="Finances" EntityType="Model.Finances" />
           <AssociationSet Name="FK_Attribute_Character" Association="Model.FK_Attribute_Character">
             <End Role="Character" EntitySet="Characters" />
             <End Role="Attribute" EntitySet="Attributes" />
@@ -369,9 +369,9 @@
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="KeyId" />
           <Property Type="Int32" Name="SourceRoomId" Nullable="false" />
-          <NavigationProperty Name="ExitKeywords" Relationship="Model.FK_ExitKeyword_Exit" FromRole="Exit" ToRole="ExitKeyword" />
-          <NavigationProperty Name="Room" Relationship="Model.FK_Exit_Room_Destination" FromRole="Exit" ToRole="Room" />
-          <NavigationProperty Name="Room1" Relationship="Model.FK_Exit_Room_Source" FromRole="Exit" ToRole="Room" />
+          <NavigationProperty Name="Keywords" Relationship="Model.FK_ExitKeyword_Exit" FromRole="Exit" ToRole="ExitKeyword" />
+          <NavigationProperty Name="DestinationRoom" Relationship="Model.FK_Exit_Room_Destination" FromRole="Exit" ToRole="Room" />
+          <NavigationProperty Name="SourceRoom" Relationship="Model.FK_Exit_Room_Source" FromRole="Exit" ToRole="Room" />
         </EntityType>
         <EntityType Name="ExitKeyword">
           <Key>
@@ -394,7 +394,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Attribute">
+        <EntityType Name="Attributes">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -406,9 +406,9 @@
           <Property Type="Int32" Name="Id" Nullable="false" />
           <Property Type="Int32" Name="Intuition" Nullable="false" />
           <Property Type="Int32" Name="Logic" Nullable="false" />
-          <Property Type="Int32" Name="Magic" Nullable="false" />
+          <Property Type="Int32" Name="Magic" Nullable="true" />
           <Property Type="Int32" Name="Reaction" Nullable="false" />
-          <Property Type="Int32" Name="Resonance" Nullable="false" />
+          <Property Type="Int32" Name="Resonance" Nullable="true" />
           <Property Type="Int32" Name="Strength" Nullable="false" />
           <Property Type="Int32" Name="Willpower" Nullable="false" />
           <NavigationProperty Name="Character" Relationship="Model.FK_Attribute_Character" FromRole="Attribute" ToRole="Character" />
@@ -427,11 +427,11 @@
           <Property Type="String" Name="Password" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="Weight" Nullable="false" />
-          <NavigationProperty Name="Attribute" Relationship="Model.FK_Attribute_Character" FromRole="Character" ToRole="Attribute" />
+          <NavigationProperty Name="Attributes" Relationship="Model.FK_Attribute_Character" FromRole="Character" ToRole="Attribute" />
           <NavigationProperty Name="Finances" Relationship="Model.FK_Finances_Character" FromRole="Character" ToRole="Finance" />
           <NavigationProperty Name="State" Relationship="Model.FK_State_Character" FromRole="Character" ToRole="State" />
         </EntityType>
-        <EntityType Name="Finance">
+        <EntityType Name="Finances">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -443,7 +443,7 @@
         </EntityType>
         <Association Name="FK_Attribute_Character">
           <End Type="Model.Character" Role="Character" Multiplicity="1" />
-          <End Type="Model.Attribute" Role="Attribute" Multiplicity="1" />
+          <End Type="Model.Attributes" Role="Attribute" Multiplicity="1" />
           <ReferentialConstraint>
             <Principal Role="Character">
               <PropertyRef Name="Id" />
@@ -455,7 +455,7 @@
         </Association>
         <Association Name="FK_Finances_Character">
           <End Type="Model.Character" Role="Character" Multiplicity="1" />
-          <End Type="Model.Finance" Role="Finance" Multiplicity="*" />
+          <End Type="Model.Finances" Role="Finance" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Character">
               <PropertyRef Name="Id" />
@@ -649,7 +649,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Attributes">
-            <EntityTypeMapping TypeName="Model.Attribute">
+            <EntityTypeMapping TypeName="Model.Attributes">
               <MappingFragment StoreEntitySet="Attribute">
                 <ScalarProperty Name="Willpower" ColumnName="Willpower" />
                 <ScalarProperty Name="Strength" ColumnName="Strength" />
@@ -684,7 +684,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Finances">
-            <EntityTypeMapping TypeName="Model.Finance">
+            <EntityTypeMapping TypeName="Model.Finances">
               <MappingFragment StoreEntitySet="Finances">
                 <ScalarProperty Name="CharacterId" ColumnName="CharacterId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
