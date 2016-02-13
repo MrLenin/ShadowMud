@@ -56,3 +56,7 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+/Backup
+/packages
+/ShadowMud
+/UpgradeLog.htm

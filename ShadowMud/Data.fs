@@ -68,8 +68,7 @@ type Agent<'T> = MailboxProcessor<'T>
 type StringQueue = Fifo<string>
 
 // EDMX-based - Seems to provide a richer interface, more fine grained control over the generated types
-[<Generate>]
-type ShadowMudEdmx = EdmxFile< @"..\ShadowMudlib\EntityModel\ShadowMud.edmx">
+type internal ShadowMudEdmx = EdmxFile< @"..\ShadowMudlib\EntityModel\ShadowMud.edmx">
 type EntityModel = ShadowMudEdmx.Model
 
 let NullableToOption (n : System.Nullable<_>) = 

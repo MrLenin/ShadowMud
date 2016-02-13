@@ -1,23 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="ShadowMudModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="ShadowMudModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityContainer Name="ShadowMudModelStoreContainer">
-          <EntitySet Name="Attribute" EntityType="ShadowMudModel.Store.Attribute" store:Type="Tables" />
-          <EntitySet Name="Character" EntityType="ShadowMudModel.Store.Character" store:Type="Tables" />
-          <EntitySet Name="Exit" EntityType="ShadowMudModel.Store.Exit" store:Type="Tables" />
-          <EntitySet Name="ExitKeyword" EntityType="ShadowMudModel.Store.ExitKeyword" store:Type="Tables" />
-          <EntitySet Name="Finances" EntityType="ShadowMudModel.Store.Finances" store:Type="Tables" />
-          <EntitySet Name="Item" EntityType="ShadowMudModel.Store.Item" store:Type="Tables" />
-          <EntitySet Name="ItemKeyword" EntityType="ShadowMudModel.Store.ItemKeyword" store:Type="Tables" />
-          <EntitySet Name="ItemWearLocation" EntityType="ShadowMudModel.Store.ItemWearLocation" store:Type="Tables" />
-          <EntitySet Name="Room" EntityType="ShadowMudModel.Store.Room" store:Type="Tables" />
-          <EntitySet Name="State" EntityType="ShadowMudModel.Store.State" store:Type="Tables" />
-          <EntitySet Name="Text" EntityType="ShadowMudModel.Store.Text" store:Type="Tables" />
-          <EntitySet Name="Zone" EntityType="ShadowMudModel.Store.Zone" store:Type="Tables" />
+          <EntitySet Name="Attribute" EntityType="ShadowMudModel.Store.Attribute" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="Character" EntityType="ShadowMudModel.Store.Character" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="Exit" EntityType="ShadowMudModel.Store.Exit" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ExitKeyword" EntityType="ShadowMudModel.Store.ExitKeyword" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="Finances" EntityType="ShadowMudModel.Store.Finances" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="Item" EntityType="ShadowMudModel.Store.Item" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ItemKeyword" EntityType="ShadowMudModel.Store.ItemKeyword" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ItemWearLocation" EntityType="ShadowMudModel.Store.ItemWearLocation" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="Room" EntityType="ShadowMudModel.Store.Room" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="State" EntityType="ShadowMudModel.Store.State" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="Text" EntityType="ShadowMudModel.Store.Text" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="Zone" EntityType="ShadowMudModel.Store.Zone" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
           <AssociationSet Name="FK_Attribute_Character" Association="ShadowMudModel.Store.FK_Attribute_Character">
             <End Role="Character" EntitySet="Character" />
             <End Role="Attribute" EntitySet="Attribute" />
@@ -304,8 +304,8 @@
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="Model" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
-        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="false">
+      <Schema Namespace="Model" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
           <EntitySet Name="Exits" EntityType="Model.Exit" />
           <EntitySet Name="ExitKeywords" EntityType="Model.ExitKeyword" />
           <AssociationSet Name="FK_ExitKeyword_Exit" Association="Model.FK_ExitKeyword_Exit">
@@ -366,7 +366,7 @@
           <Property Type="String" Name="Description" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="DestinationRoomId" Nullable="false" />
           <Property Type="Int32" Name="Direction" Nullable="false" />
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="KeyId" />
           <Property Type="Int32" Name="SourceRoomId" Nullable="false" />
           <NavigationProperty Name="Keywords" Relationship="Model.FK_ExitKeyword_Exit" FromRole="Exit" ToRole="ExitKeyword" />
@@ -377,7 +377,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Keyword" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="ExitId" Nullable="false" />
           <NavigationProperty Name="Exit" Relationship="Model.FK_ExitKeyword_Exit" FromRole="ExitKeyword" ToRole="Exit" />
@@ -421,7 +421,7 @@
           <Property Type="String" Name="Description" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="Gender" Nullable="false" />
           <Property Type="Int32" Name="Height" Nullable="false" />
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="Metatype" Nullable="false" />
           <Property Type="String" Name="Name" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Password" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
@@ -437,7 +437,7 @@
           </Key>
           <Property Type="Int32" Name="Amount" Nullable="false" />
           <Property Type="Int32" Name="Currency" Nullable="false" />
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="CharacterId" Nullable="false" />
           <NavigationProperty Name="Character" Relationship="Model.FK_Finances_Character" FromRole="Finance" ToRole="Character" />
         </EntityType>
@@ -469,7 +469,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Boolean" Name="IsContainer" Nullable="false" />
           <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="Type" Nullable="false" />
@@ -483,7 +483,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="String" Name="Keyword" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ItemId" Nullable="false" />
           <NavigationProperty Name="Item" Relationship="Model.FK_ItemKeyword_Item" FromRole="ItemKeyword" ToRole="Item" />
         </EntityType>
@@ -492,7 +492,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="Int32" Name="Location" Nullable="false" />
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ItemId" Nullable="false" />
           <NavigationProperty Name="Item" Relationship="Model.FK_ItemWearLocation_Item" FromRole="ItemWearLocation" ToRole="Item" />
         </EntityType>
@@ -525,7 +525,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="String" Name="Description" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Rooms" Relationship="Model.FK_Room_Zone" FromRole="Zone" ToRole="Room" />
         </EntityType>
@@ -534,7 +534,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="String" Name="Data" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Name" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Room">
@@ -542,7 +542,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="String" Name="Description" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="ZoneId" Nullable="false" />
           <NavigationProperty Name="Entrances" Relationship="Model.FK_Exit_Room_Destination" FromRole="Room" ToRole="Exit" />
@@ -625,7 +625,7 @@
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="ShadowMudModelStoreContainer" CdmEntityContainer="Entities">
           <EntitySetMapping Name="Exits">
             <EntityTypeMapping TypeName="Model.Exit">
@@ -766,20 +766,20 @@
     </edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
-  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
-    <Connection>
-      <DesignerInfoPropertySet>
-        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
-      </DesignerInfoPropertySet>
-    </Connection>
-    <Options>
-      <DesignerInfoPropertySet>
-        <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="True" />
-        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
-      </DesignerInfoPropertySet>
-    </Options>
+  <edmx:Designer>
+    <edmx:Connection>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <edmx:DesignerProperty Name="EnablePluralization" Value="True" />
+        <edmx:DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
-    <Diagrams></Diagrams>
-  </Designer>
+    <edmx:Diagrams />
+  </edmx:Designer>
 </edmx:Edmx>

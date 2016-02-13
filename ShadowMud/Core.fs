@@ -23,7 +23,7 @@ type private GameCommands =
 
 let private handleClientInput (client : Client) =
     if client.InputPending then
-        let lexbuf = Lexing.LexBuffer<char>.FromString (client.InputQueue.ToLower ())
+        let lexbuf = LexBuffer<char>.FromString (client.InputQueue.ToLower ())
         let command = InputParser.start InputLexer.tokenize lexbuf
         Server.SendMessage(Input.Handle (client, command), client.SessionId)
 

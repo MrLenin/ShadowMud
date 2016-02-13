@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 11
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ShadowMud", "ShadowMud\ShadowMud.fsproj", "{4ED28438-E569-42DD-9401-0A4754C1AD68}"
 EndProject
 Global

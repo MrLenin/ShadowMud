@@ -8,26 +8,27 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.Data.Objects;
-using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
 using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Data.Entity.Core.EntityClient;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Core.Objects.DataClasses;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
-[assembly: EdmSchemaAttribute()]
+[assembly: EdmSchema()]
 #region EDM Relationship Metadata
 
-[assembly: EdmRelationshipAttribute("Model", "FK_ExitKeyword_Exit", "Exit", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Exit), "ExitKeyword", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.ExitKeyword), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_Attribute_Character", "Character", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "Attribute", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Attributes), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_Finances_Character", "Character", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "Finance", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Finances), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_ItemKeyword_Item", "Item", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Item), "ItemKeyword", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.ItemKeyword), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_ItemWearLocation_Item", "Item", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Item), "ItemWearLocation", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.ItemWearLocation), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_Exit_Room_Destination", "Room", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Room), "Exit", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Exit), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_Exit_Room_Source", "Room", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Room), "Exit", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Exit), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_Room_Zone", "Zone", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Zone), "Room", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Room), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_State_Character", "Character", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "State", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(ShadowMud.EntityModel.State), true)]
-[assembly: EdmRelationshipAttribute("Model", "FK_State_Room", "Room", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Room), "State", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.State), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_ExitKeyword_Exit", "Exit", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Exit), "ExitKeyword", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.ExitKeyword), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_Attribute_Character", "Character", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "Attribute", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Attributes), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_Finances_Character", "Character", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "Finance", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Finances), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_ItemKeyword_Item", "Item", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Item), "ItemKeyword", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.ItemKeyword), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_ItemWearLocation_Item", "Item", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Item), "ItemWearLocation", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.ItemWearLocation), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_Exit_Room_Destination", "Room", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Room), "Exit", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Exit), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_Exit_Room_Source", "Room", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Room), "Exit", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Exit), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_Room_Zone", "Zone", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Zone), "Room", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.Room), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_State_Character", "Character", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Character), "State", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(ShadowMud.EntityModel.State), true)]
+[assembly: EdmRelationshipAttribute("Model", "FK_State_Room", "Room", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(ShadowMud.EntityModel.Room), "State", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ShadowMud.EntityModel.State), true)]
 
 #endregion
 
@@ -272,6 +273,7 @@ namespace ShadowMud.EntityModel
         private ObjectSet<State> _States;
 
         #endregion
+
         #region AddTo Methods
     
         /// <summary>
@@ -371,11 +373,11 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
-    
 
     #endregion
-    
+
     #region Entities
     
     /// <summary>
@@ -420,7 +422,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -437,7 +440,7 @@ namespace ShadowMud.EntityModel
             {
                 OnAgilityChanging(value);
                 ReportPropertyChanging("Agility");
-                _Agility = StructuralObject.SetValidValue(value);
+                _Agility = StructuralObject.SetValidValue(value, "Agility");
                 ReportPropertyChanged("Agility");
                 OnAgilityChanged();
             }
@@ -461,7 +464,7 @@ namespace ShadowMud.EntityModel
             {
                 OnBodyChanging(value);
                 ReportPropertyChanging("Body");
-                _Body = StructuralObject.SetValidValue(value);
+                _Body = StructuralObject.SetValidValue(value, "Body");
                 ReportPropertyChanged("Body");
                 OnBodyChanged();
             }
@@ -485,7 +488,7 @@ namespace ShadowMud.EntityModel
             {
                 OnCharismaChanging(value);
                 ReportPropertyChanging("Charisma");
-                _Charisma = StructuralObject.SetValidValue(value);
+                _Charisma = StructuralObject.SetValidValue(value, "Charisma");
                 ReportPropertyChanged("Charisma");
                 OnCharismaChanged();
             }
@@ -509,7 +512,7 @@ namespace ShadowMud.EntityModel
             {
                 OnEdgeChanging(value);
                 ReportPropertyChanging("Edge");
-                _Edge = StructuralObject.SetValidValue(value);
+                _Edge = StructuralObject.SetValidValue(value, "Edge");
                 ReportPropertyChanged("Edge");
                 OnEdgeChanged();
             }
@@ -533,7 +536,7 @@ namespace ShadowMud.EntityModel
             {
                 OnEssenceChanging(value);
                 ReportPropertyChanging("Essence");
-                _Essence = StructuralObject.SetValidValue(value);
+                _Essence = StructuralObject.SetValidValue(value, "Essence");
                 ReportPropertyChanged("Essence");
                 OnEssenceChanged();
             }
@@ -559,7 +562,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -584,7 +587,7 @@ namespace ShadowMud.EntityModel
             {
                 OnIntuitionChanging(value);
                 ReportPropertyChanging("Intuition");
-                _Intuition = StructuralObject.SetValidValue(value);
+                _Intuition = StructuralObject.SetValidValue(value, "Intuition");
                 ReportPropertyChanged("Intuition");
                 OnIntuitionChanged();
             }
@@ -608,7 +611,7 @@ namespace ShadowMud.EntityModel
             {
                 OnLogicChanging(value);
                 ReportPropertyChanging("Logic");
-                _Logic = StructuralObject.SetValidValue(value);
+                _Logic = StructuralObject.SetValidValue(value, "Logic");
                 ReportPropertyChanged("Logic");
                 OnLogicChanged();
             }
@@ -632,7 +635,7 @@ namespace ShadowMud.EntityModel
             {
                 OnMagicChanging(value);
                 ReportPropertyChanging("Magic");
-                _Magic = StructuralObject.SetValidValue(value);
+                _Magic = StructuralObject.SetValidValue(value, "Magic");
                 ReportPropertyChanged("Magic");
                 OnMagicChanged();
             }
@@ -656,7 +659,7 @@ namespace ShadowMud.EntityModel
             {
                 OnReactionChanging(value);
                 ReportPropertyChanging("Reaction");
-                _Reaction = StructuralObject.SetValidValue(value);
+                _Reaction = StructuralObject.SetValidValue(value, "Reaction");
                 ReportPropertyChanged("Reaction");
                 OnReactionChanged();
             }
@@ -680,7 +683,7 @@ namespace ShadowMud.EntityModel
             {
                 OnResonanceChanging(value);
                 ReportPropertyChanging("Resonance");
-                _Resonance = StructuralObject.SetValidValue(value);
+                _Resonance = StructuralObject.SetValidValue(value, "Resonance");
                 ReportPropertyChanged("Resonance");
                 OnResonanceChanged();
             }
@@ -704,7 +707,7 @@ namespace ShadowMud.EntityModel
             {
                 OnStrengthChanging(value);
                 ReportPropertyChanging("Strength");
-                _Strength = StructuralObject.SetValidValue(value);
+                _Strength = StructuralObject.SetValidValue(value, "Strength");
                 ReportPropertyChanged("Strength");
                 OnStrengthChanged();
             }
@@ -728,7 +731,7 @@ namespace ShadowMud.EntityModel
             {
                 OnWillpowerChanging(value);
                 ReportPropertyChanging("Willpower");
-                _Willpower = StructuralObject.SetValidValue(value);
+                _Willpower = StructuralObject.SetValidValue(value, "Willpower");
                 ReportPropertyChanged("Willpower");
                 OnWillpowerChanged();
             }
@@ -738,7 +741,7 @@ namespace ShadowMud.EntityModel
         partial void OnWillpowerChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -780,6 +783,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -822,7 +826,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -839,7 +844,7 @@ namespace ShadowMud.EntityModel
             {
                 OnAwakenedChanging(value);
                 ReportPropertyChanging("Awakened");
-                _Awakened = StructuralObject.SetValidValue(value);
+                _Awakened = StructuralObject.SetValidValue(value, "Awakened");
                 ReportPropertyChanged("Awakened");
                 OnAwakenedChanged();
             }
@@ -863,7 +868,7 @@ namespace ShadowMud.EntityModel
             {
                 OnDescriptionChanging(value);
                 ReportPropertyChanging("Description");
-                _Description = StructuralObject.SetValidValue(value, false);
+                _Description = StructuralObject.SetValidValue(value, false, "Description");
                 ReportPropertyChanged("Description");
                 OnDescriptionChanged();
             }
@@ -887,7 +892,7 @@ namespace ShadowMud.EntityModel
             {
                 OnGenderChanging(value);
                 ReportPropertyChanging("Gender");
-                _Gender = StructuralObject.SetValidValue(value);
+                _Gender = StructuralObject.SetValidValue(value, "Gender");
                 ReportPropertyChanged("Gender");
                 OnGenderChanged();
             }
@@ -911,7 +916,7 @@ namespace ShadowMud.EntityModel
             {
                 OnHeightChanging(value);
                 ReportPropertyChanging("Height");
-                _Height = StructuralObject.SetValidValue(value);
+                _Height = StructuralObject.SetValidValue(value, "Height");
                 ReportPropertyChanged("Height");
                 OnHeightChanged();
             }
@@ -937,7 +942,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -962,7 +967,7 @@ namespace ShadowMud.EntityModel
             {
                 OnMetatypeChanging(value);
                 ReportPropertyChanging("Metatype");
-                _Metatype = StructuralObject.SetValidValue(value);
+                _Metatype = StructuralObject.SetValidValue(value, "Metatype");
                 ReportPropertyChanged("Metatype");
                 OnMetatypeChanged();
             }
@@ -986,7 +991,7 @@ namespace ShadowMud.EntityModel
             {
                 OnNameChanging(value);
                 ReportPropertyChanging("Name");
-                _Name = StructuralObject.SetValidValue(value, false);
+                _Name = StructuralObject.SetValidValue(value, false, "Name");
                 ReportPropertyChanged("Name");
                 OnNameChanged();
             }
@@ -1010,7 +1015,7 @@ namespace ShadowMud.EntityModel
             {
                 OnPasswordChanging(value);
                 ReportPropertyChanging("Password");
-                _Password = StructuralObject.SetValidValue(value, false);
+                _Password = StructuralObject.SetValidValue(value, false, "Password");
                 ReportPropertyChanged("Password");
                 OnPasswordChanged();
             }
@@ -1034,7 +1039,7 @@ namespace ShadowMud.EntityModel
             {
                 OnTitleChanging(value);
                 ReportPropertyChanging("Title");
-                _Title = StructuralObject.SetValidValue(value, false);
+                _Title = StructuralObject.SetValidValue(value, false, "Title");
                 ReportPropertyChanged("Title");
                 OnTitleChanged();
             }
@@ -1058,7 +1063,7 @@ namespace ShadowMud.EntityModel
             {
                 OnWeightChanging(value);
                 ReportPropertyChanging("Weight");
-                _Weight = StructuralObject.SetValidValue(value);
+                _Weight = StructuralObject.SetValidValue(value, "Weight");
                 ReportPropertyChanged("Weight");
                 OnWeightChanged();
             }
@@ -1068,7 +1073,7 @@ namespace ShadowMud.EntityModel
         partial void OnWeightChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -1170,6 +1175,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -1202,7 +1208,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -1219,7 +1226,7 @@ namespace ShadowMud.EntityModel
             {
                 OnDescriptionChanging(value);
                 ReportPropertyChanging("Description");
-                _Description = StructuralObject.SetValidValue(value, false);
+                _Description = StructuralObject.SetValidValue(value, false, "Description");
                 ReportPropertyChanged("Description");
                 OnDescriptionChanged();
             }
@@ -1243,7 +1250,7 @@ namespace ShadowMud.EntityModel
             {
                 OnDestinationRoomIdChanging(value);
                 ReportPropertyChanging("DestinationRoomId");
-                _DestinationRoomId = StructuralObject.SetValidValue(value);
+                _DestinationRoomId = StructuralObject.SetValidValue(value, "DestinationRoomId");
                 ReportPropertyChanged("DestinationRoomId");
                 OnDestinationRoomIdChanged();
             }
@@ -1267,7 +1274,7 @@ namespace ShadowMud.EntityModel
             {
                 OnDirectionChanging(value);
                 ReportPropertyChanging("Direction");
-                _Direction = StructuralObject.SetValidValue(value);
+                _Direction = StructuralObject.SetValidValue(value, "Direction");
                 ReportPropertyChanged("Direction");
                 OnDirectionChanged();
             }
@@ -1293,7 +1300,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -1318,7 +1325,7 @@ namespace ShadowMud.EntityModel
             {
                 OnKeyIdChanging(value);
                 ReportPropertyChanging("KeyId");
-                _KeyId = StructuralObject.SetValidValue(value);
+                _KeyId = StructuralObject.SetValidValue(value, "KeyId");
                 ReportPropertyChanged("KeyId");
                 OnKeyIdChanged();
             }
@@ -1342,7 +1349,7 @@ namespace ShadowMud.EntityModel
             {
                 OnSourceRoomIdChanging(value);
                 ReportPropertyChanging("SourceRoomId");
-                _SourceRoomId = StructuralObject.SetValidValue(value);
+                _SourceRoomId = StructuralObject.SetValidValue(value, "SourceRoomId");
                 ReportPropertyChanged("SourceRoomId");
                 OnSourceRoomIdChanged();
             }
@@ -1352,7 +1359,7 @@ namespace ShadowMud.EntityModel
         partial void OnSourceRoomIdChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -1454,6 +1461,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -1482,7 +1490,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -1501,7 +1510,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -1526,7 +1535,7 @@ namespace ShadowMud.EntityModel
             {
                 OnKeywordChanging(value);
                 ReportPropertyChanging("Keyword");
-                _Keyword = StructuralObject.SetValidValue(value, false);
+                _Keyword = StructuralObject.SetValidValue(value, false, "Keyword");
                 ReportPropertyChanged("Keyword");
                 OnKeywordChanged();
             }
@@ -1550,7 +1559,7 @@ namespace ShadowMud.EntityModel
             {
                 OnExitIdChanging(value);
                 ReportPropertyChanging("ExitId");
-                _ExitId = StructuralObject.SetValidValue(value);
+                _ExitId = StructuralObject.SetValidValue(value, "ExitId");
                 ReportPropertyChanged("ExitId");
                 OnExitIdChanged();
             }
@@ -1560,7 +1569,7 @@ namespace ShadowMud.EntityModel
         partial void OnExitIdChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -1602,6 +1611,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -1632,7 +1642,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -1649,7 +1660,7 @@ namespace ShadowMud.EntityModel
             {
                 OnAmountChanging(value);
                 ReportPropertyChanging("Amount");
-                _Amount = StructuralObject.SetValidValue(value);
+                _Amount = StructuralObject.SetValidValue(value, "Amount");
                 ReportPropertyChanged("Amount");
                 OnAmountChanged();
             }
@@ -1673,7 +1684,7 @@ namespace ShadowMud.EntityModel
             {
                 OnCurrencyChanging(value);
                 ReportPropertyChanging("Currency");
-                _Currency = StructuralObject.SetValidValue(value);
+                _Currency = StructuralObject.SetValidValue(value, "Currency");
                 ReportPropertyChanged("Currency");
                 OnCurrencyChanged();
             }
@@ -1699,7 +1710,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -1724,7 +1735,7 @@ namespace ShadowMud.EntityModel
             {
                 OnCharacterIdChanging(value);
                 ReportPropertyChanging("CharacterId");
-                _CharacterId = StructuralObject.SetValidValue(value);
+                _CharacterId = StructuralObject.SetValidValue(value, "CharacterId");
                 ReportPropertyChanged("CharacterId");
                 OnCharacterIdChanged();
             }
@@ -1734,7 +1745,7 @@ namespace ShadowMud.EntityModel
         partial void OnCharacterIdChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -1776,6 +1787,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -1810,7 +1822,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -1829,7 +1842,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -1854,7 +1867,7 @@ namespace ShadowMud.EntityModel
             {
                 OnIsContainerChanging(value);
                 ReportPropertyChanging("IsContainer");
-                _IsContainer = StructuralObject.SetValidValue(value);
+                _IsContainer = StructuralObject.SetValidValue(value, "IsContainer");
                 ReportPropertyChanged("IsContainer");
                 OnIsContainerChanged();
             }
@@ -1878,7 +1891,7 @@ namespace ShadowMud.EntityModel
             {
                 OnTitleChanging(value);
                 ReportPropertyChanging("Title");
-                _Title = StructuralObject.SetValidValue(value, false);
+                _Title = StructuralObject.SetValidValue(value, false, "Title");
                 ReportPropertyChanged("Title");
                 OnTitleChanged();
             }
@@ -1902,7 +1915,7 @@ namespace ShadowMud.EntityModel
             {
                 OnTypeChanging(value);
                 ReportPropertyChanging("Type");
-                _Type = StructuralObject.SetValidValue(value);
+                _Type = StructuralObject.SetValidValue(value, "Type");
                 ReportPropertyChanged("Type");
                 OnTypeChanged();
             }
@@ -1926,7 +1939,7 @@ namespace ShadowMud.EntityModel
             {
                 OnValueChanging(value);
                 ReportPropertyChanging("Value");
-                _Value = StructuralObject.SetValidValue(value);
+                _Value = StructuralObject.SetValidValue(value, "Value");
                 ReportPropertyChanged("Value");
                 OnValueChanged();
             }
@@ -1950,7 +1963,7 @@ namespace ShadowMud.EntityModel
             {
                 OnWeightChanging(value);
                 ReportPropertyChanging("Weight");
-                _Weight = StructuralObject.SetValidValue(value);
+                _Weight = StructuralObject.SetValidValue(value, "Weight");
                 ReportPropertyChanged("Weight");
                 OnWeightChanged();
             }
@@ -1960,7 +1973,7 @@ namespace ShadowMud.EntityModel
         partial void OnWeightChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -2008,6 +2021,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2036,7 +2050,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -2053,7 +2068,7 @@ namespace ShadowMud.EntityModel
             {
                 OnKeywordChanging(value);
                 ReportPropertyChanging("Keyword");
-                _Keyword = StructuralObject.SetValidValue(value, false);
+                _Keyword = StructuralObject.SetValidValue(value, false, "Keyword");
                 ReportPropertyChanged("Keyword");
                 OnKeywordChanged();
             }
@@ -2079,7 +2094,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -2104,7 +2119,7 @@ namespace ShadowMud.EntityModel
             {
                 OnItemIdChanging(value);
                 ReportPropertyChanging("ItemId");
-                _ItemId = StructuralObject.SetValidValue(value);
+                _ItemId = StructuralObject.SetValidValue(value, "ItemId");
                 ReportPropertyChanged("ItemId");
                 OnItemIdChanged();
             }
@@ -2114,7 +2129,7 @@ namespace ShadowMud.EntityModel
         partial void OnItemIdChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -2156,6 +2171,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2184,7 +2200,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -2201,7 +2218,7 @@ namespace ShadowMud.EntityModel
             {
                 OnLocationChanging(value);
                 ReportPropertyChanging("Location");
-                _Location = StructuralObject.SetValidValue(value);
+                _Location = StructuralObject.SetValidValue(value, "Location");
                 ReportPropertyChanged("Location");
                 OnLocationChanged();
             }
@@ -2227,7 +2244,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -2252,7 +2269,7 @@ namespace ShadowMud.EntityModel
             {
                 OnItemIdChanging(value);
                 ReportPropertyChanging("ItemId");
-                _ItemId = StructuralObject.SetValidValue(value);
+                _ItemId = StructuralObject.SetValidValue(value, "ItemId");
                 ReportPropertyChanged("ItemId");
                 OnItemIdChanged();
             }
@@ -2262,7 +2279,7 @@ namespace ShadowMud.EntityModel
         partial void OnItemIdChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -2304,6 +2321,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2334,7 +2352,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -2351,7 +2370,7 @@ namespace ShadowMud.EntityModel
             {
                 OnDescriptionChanging(value);
                 ReportPropertyChanging("Description");
-                _Description = StructuralObject.SetValidValue(value, false);
+                _Description = StructuralObject.SetValidValue(value, false, "Description");
                 ReportPropertyChanged("Description");
                 OnDescriptionChanged();
             }
@@ -2377,7 +2396,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -2402,7 +2421,7 @@ namespace ShadowMud.EntityModel
             {
                 OnTitleChanging(value);
                 ReportPropertyChanging("Title");
-                _Title = StructuralObject.SetValidValue(value, false);
+                _Title = StructuralObject.SetValidValue(value, false, "Title");
                 ReportPropertyChanged("Title");
                 OnTitleChanged();
             }
@@ -2426,7 +2445,7 @@ namespace ShadowMud.EntityModel
             {
                 OnZoneIdChanging(value);
                 ReportPropertyChanging("ZoneId");
-                _ZoneId = StructuralObject.SetValidValue(value);
+                _ZoneId = StructuralObject.SetValidValue(value, "ZoneId");
                 ReportPropertyChanged("ZoneId");
                 OnZoneIdChanged();
             }
@@ -2436,7 +2455,7 @@ namespace ShadowMud.EntityModel
         partial void OnZoneIdChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -2544,6 +2563,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2574,7 +2594,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -2591,7 +2612,7 @@ namespace ShadowMud.EntityModel
             {
                 OnCurrentRoomChanging(value);
                 ReportPropertyChanging("CurrentRoom");
-                _CurrentRoom = StructuralObject.SetValidValue(value);
+                _CurrentRoom = StructuralObject.SetValidValue(value, "CurrentRoom");
                 ReportPropertyChanged("CurrentRoom");
                 OnCurrentRoomChanged();
             }
@@ -2617,7 +2638,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -2642,7 +2663,7 @@ namespace ShadowMud.EntityModel
             {
                 OnPhysicalMonitorChanging(value);
                 ReportPropertyChanging("PhysicalMonitor");
-                _PhysicalMonitor = StructuralObject.SetValidValue(value);
+                _PhysicalMonitor = StructuralObject.SetValidValue(value, "PhysicalMonitor");
                 ReportPropertyChanged("PhysicalMonitor");
                 OnPhysicalMonitorChanged();
             }
@@ -2666,7 +2687,7 @@ namespace ShadowMud.EntityModel
             {
                 OnStunMonitorChanging(value);
                 ReportPropertyChanging("StunMonitor");
-                _StunMonitor = StructuralObject.SetValidValue(value);
+                _StunMonitor = StructuralObject.SetValidValue(value, "StunMonitor");
                 ReportPropertyChanged("StunMonitor");
                 OnStunMonitorChanged();
             }
@@ -2676,7 +2697,7 @@ namespace ShadowMud.EntityModel
         partial void OnStunMonitorChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -2756,6 +2777,7 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2784,7 +2806,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -2801,7 +2824,7 @@ namespace ShadowMud.EntityModel
             {
                 OnDataChanging(value);
                 ReportPropertyChanging("Data");
-                _Data = StructuralObject.SetValidValue(value, false);
+                _Data = StructuralObject.SetValidValue(value, false, "Data");
                 ReportPropertyChanged("Data");
                 OnDataChanged();
             }
@@ -2827,7 +2850,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -2852,7 +2875,7 @@ namespace ShadowMud.EntityModel
             {
                 OnNameChanging(value);
                 ReportPropertyChanging("Name");
-                _Name = StructuralObject.SetValidValue(value, false);
+                _Name = StructuralObject.SetValidValue(value, false, "Name");
                 ReportPropertyChanged("Name");
                 OnNameChanged();
             }
@@ -2862,7 +2885,7 @@ namespace ShadowMud.EntityModel
         partial void OnNameChanged();
 
         #endregion
-    
+
     }
     
     /// <summary>
@@ -2891,7 +2914,8 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -2908,7 +2932,7 @@ namespace ShadowMud.EntityModel
             {
                 OnDescriptionChanging(value);
                 ReportPropertyChanging("Description");
-                _Description = StructuralObject.SetValidValue(value, false);
+                _Description = StructuralObject.SetValidValue(value, false, "Description");
                 ReportPropertyChanged("Description");
                 OnDescriptionChanged();
             }
@@ -2934,7 +2958,7 @@ namespace ShadowMud.EntityModel
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -2959,7 +2983,7 @@ namespace ShadowMud.EntityModel
             {
                 OnTitleChanging(value);
                 ReportPropertyChanging("Title");
-                _Title = StructuralObject.SetValidValue(value, false);
+                _Title = StructuralObject.SetValidValue(value, false, "Title");
                 ReportPropertyChanged("Title");
                 OnTitleChanged();
             }
@@ -2969,7 +2993,7 @@ namespace ShadowMud.EntityModel
         partial void OnTitleChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -2995,8 +3019,9 @@ namespace ShadowMud.EntityModel
         }
 
         #endregion
+
     }
 
     #endregion
-    
+
 }

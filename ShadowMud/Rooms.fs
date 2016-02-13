@@ -121,7 +121,7 @@ let private doesRoomExist id =
             select i.Id
             contains id }
 
-let getRoomEntities id =
+let internal getRoomEntities id =
     try query {
         for i in context.Rooms.Include("Entrances.Keywords.Exit").Include("Exits.Keywords.Exit")
             .Include("Exits.DestinationRoom").Include("Zone") do

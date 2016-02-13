@@ -33,7 +33,7 @@ type private ClientTableCommands =
     | StoreInput of (Guid * string)
     | RetrieveInput of (Guid list * AsyncReplyChannel<Map<Guid, string list>>)
 
-let private listener = new TcpListener (IPAddress.Loopback, 4242)
+let private listener = new TcpListener (IPAddress.Any, 4242)
 let private sendBufferSize = 24*1024
 
 let private agent = Agent.Start (fun inbox ->
