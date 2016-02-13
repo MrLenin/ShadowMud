@@ -58,5 +58,7 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 /Backup
 /packages
-/ShadowMud
 /UpgradeLog.htm
+/ShadowMud/InputLexer.fs
+/ShadowMud/InputParser.fs
+/ShadowMud/InputParser.fsi
